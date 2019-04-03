@@ -1,6 +1,9 @@
 package geometry
 
-import "math"
+import (
+	"log"
+	"math"
+)
 
 const EPSILON = 0.00001
 
@@ -85,6 +88,33 @@ func (t Tuple) Divide(c float64) Tuple {
 
 func (t Tuple) Magnitude() float64 {
 	return math.Sqrt(t.X*t.X + t.Y*t.Y + t.Z*t.Z)
+}
+
+func (t Tuple) Normalize() Tuple {
+	mag := t.Magnitude()
+	return Tuple{
+		X: t.X / mag,
+		Y: t.Y / mag,
+		Z: t.Z / mag,
+		W: t.W / mag,
+	}
+}
+
+func (t Tuple) Dot(s Tuple) float64 {
+	return t.X*s.X + t.Y*s.Y + t.Z*s.Z + t.W*s.W
+}
+
+func (t Tuple) Cross(s Tuple) Tuple {
+	if !(t.IsVector() && s.IsVector()) {
+		log.Fatal("Both operands must be vectors for a cross product")
+	}
+
+	return Tuple{
+		X: t.Y*s.Z - t.Z*s.Y,
+		Y: t.Z*s.X - t.X*s.Z,
+		Z: t.X*s.Y - t.Y*s.X,
+		W: 0.0,
+	}
 }
 
 func floatEquals(f, g float64) bool {

@@ -168,4 +168,36 @@ var _ = Describe("Tuple", func() {
 			Expect(w.Magnitude()).To(BeNumerically("~", math.Sqrt(14)))
 		})
 	})
+
+	Context("normalization", func() {
+		It("normalizes (4, 0, 0) to (1, 0, 0)", func() {
+			v := geometry.Vector(4, 0, 0)
+			Expect(v.Normalize()).To(Equal(geometry.Vector(1, 0, 0)))
+		})
+
+		It("normalizes (1, 2, 3) correctly", func() {
+			v := geometry.Vector(1, 2, 3)
+			r14 := math.Sqrt(14)
+			n := v.Normalize()
+			Expect(n).To(Equal(geometry.Vector(1/r14, 2/r14, 3/r14)))
+			Expect(n.Magnitude()).To(BeNumerically("~", 1))
+		})
+	})
+
+	Context("dot product", func() {
+		It("can calculate it correctly", func() {
+			v := geometry.Vector(1, 2, 3)
+			w := geometry.Vector(2, 3, 4)
+			Expect(v.Dot(w)).To(BeNumerically("~", 20))
+		})
+	})
+
+	Context("cross product", func() {
+		It("can calculate it correctly", func() {
+			v := geometry.Vector(1, 2, 3)
+			w := geometry.Vector(2, 3, 4)
+			Expect(v.Cross(w)).To(tuple_matcher.Equal(geometry.Vector(-1, 2, -1)))
+			Expect(w.Cross(v)).To(tuple_matcher.Equal(geometry.Vector(1, -2, 1)))
+		})
+	})
 })

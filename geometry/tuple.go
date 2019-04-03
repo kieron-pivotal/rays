@@ -36,7 +36,7 @@ func (t Tuple) IsVector() bool {
 
 func (t Tuple) Equals(s Tuple) bool {
 	return floatEquals(t.X, s.X) &&
-		floatEquals(t.X, s.X) &&
+		floatEquals(t.Y, s.Y) &&
 		floatEquals(t.Z, s.Z) &&
 		floatEquals(t.W, s.W)
 }

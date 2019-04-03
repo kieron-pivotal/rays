@@ -6,6 +6,7 @@ import (
 	"github.com/kieron-pivotal/rays/geometry"
 	"github.com/kieron-pivotal/rays/geometry/tuple_matcher"
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 )
 
@@ -71,6 +72,16 @@ var _ = Describe("Tuple", func() {
 			r := geometry.Vector(1, 2, 3)
 			Expect(p).ToNot(tuple_matcher.Equal(r))
 		})
+
+		DescribeTable("checking component differences", func(t1, t2 geometry.Tuple) {
+			Expect(t1.Equals(t2)).To(BeFalse())
+		},
+
+			Entry("x", geometry.Vector(1, 2, 3), geometry.Vector(0, 2, 3)),
+			Entry("y", geometry.Vector(1, 2, 3), geometry.Vector(1, 1, 3)),
+			Entry("z", geometry.Vector(1, 2, 3), geometry.Vector(1, 2, 4)),
+			Entry("w", geometry.Point(1, 2, 3), geometry.Vector(1, 2, 3)),
+		)
 	})
 
 	Context("arithmetic", func() {

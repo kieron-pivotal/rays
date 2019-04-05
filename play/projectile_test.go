@@ -2,7 +2,11 @@ package play_test
 
 import (
 	"fmt"
+	"math"
+	"os"
 
+	"github.com/kieron-pivotal/rays/canvas"
+	"github.com/kieron-pivotal/rays/color"
 	"github.com/kieron-pivotal/rays/geometry"
 	"github.com/kieron-pivotal/rays/play"
 	. "github.com/onsi/ginkgo"
@@ -11,9 +15,17 @@ import (
 
 var _ = Describe("Projectile", func() {
 
+	var (
+		gravity geometry.Tuple
+		wind    geometry.Tuple
+	)
+
+	BeforeEach(func() {
+		gravity = geometry.Vector(0, -0.1, 0)
+		wind = geometry.Vector(-0.01, 0, 0)
+	})
+
 	It("can fire a projectile", func() {
-		gravity := geometry.Vector(0, -0.1, 0)
-		wind := geometry.Vector(-0.01, 0, 0)
 		env := play.NewEnv(gravity, wind)
 		Expect(env).ToNot(BeNil())
 
@@ -29,4 +41,44 @@ var _ = Describe("Projectile", func() {
 		}
 	})
 
+	It("can plot the project to PPM", func() {
+		env := play.NewEnv(gravity, wind)
+		Expect(env).ToNot(BeNil())
+
+		startPosition := geometry.Point(0, 1, 0)
+		initialVelocity := geometry.Vector(1, 1.8, 0).Normalize()
+		speedFactor := 12.0
+		trace := env.FireProjectile(startPosition, initialVelocity.Multiply(speedFactor))
+
+		maxX, maxY := 0.0, 0.0
+		for _, p := range trace {
+			if p.X > maxX {
+				maxX = p.X
+			}
+			if p.Y > maxY {
+				maxY = p.Y
+			}
+		}
+
+		width := 900
+		height := 500
+		xFactor := float64(width-1) / maxX
+		yFactor := float64(height-1) / maxY
+		factor := math.Min(xFactor, yFactor)
+
+		canvas := canvas.New(width, height)
+		red := color.New(1, 0, 0)
+
+		for _, p := range trace {
+			x := int(math.Round(p.X * factor))
+			y := int(math.Round(p.Y * factor))
+			canvas.SetPixel(x, height-y-1, red)
+		}
+
+		file, err := os.Create("projectile.ppm")
+		Expect(err).NotTo(HaveOccurred())
+
+		file.WriteString(canvas.ToPPM())
+		file.Close()
+	})
 })

@@ -86,6 +86,15 @@ func (t Tuple) Divide(c float64) Tuple {
 	}
 }
 
+func (t Tuple) BitwiseMultiply(s Tuple) Tuple {
+	return Tuple{
+		X: t.X * s.X,
+		Y: t.Y * s.Y,
+		Z: t.Z * s.Z,
+		W: t.W * s.W,
+	}
+}
+
 func (t Tuple) Magnitude() float64 {
 	return math.Sqrt(t.X*t.X + t.Y*t.Y + t.Z*t.Z)
 }

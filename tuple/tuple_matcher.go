@@ -1,24 +1,23 @@
-package tuple_matcher
+package tuple
 
 import (
 	"fmt"
 
-	"github.com/kieron-pivotal/rays/tuple"
 	"github.com/onsi/gomega/types"
 )
 
 type tupleMatcher struct {
-	expected tuple.Tuple
+	expected Tuple
 }
 
-func Equal(expected tuple.Tuple) types.GomegaMatcher {
+func Equal(expected Tuple) types.GomegaMatcher {
 	return &tupleMatcher{
 		expected: expected,
 	}
 }
 
 func (m *tupleMatcher) Match(actual interface{}) (success bool, err error) {
-	actualTuple, ok := actual.(tuple.Tuple)
+	actualTuple, ok := actual.(Tuple)
 	if !ok {
 		return false, fmt.Errorf("EqualsTuple matcher expects a tuple.Tuple")
 	}

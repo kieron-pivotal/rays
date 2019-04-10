@@ -3,7 +3,6 @@ package matrix_test
 import (
 	"github.com/kieron-pivotal/rays/matrix"
 	"github.com/kieron-pivotal/rays/tuple"
-	"github.com/kieron-pivotal/rays/tuple/tuple_matcher"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -94,7 +93,7 @@ var _ = Describe("Matrix", func() {
 		It("can multiply a matrix by a tuple", func() {
 			m := matrix.New(4, 4, 1, 2, 3, 4, 2, 4, 4, 2, 8, 6, 4, 1, 0, 0, 0, 1)
 			t := tuple.New(1, 2, 3, 1)
-			Expect(m.TupleMultiply(t)).To(tuple_matcher.Equal(tuple.New(18, 24, 33, 1)))
+			Expect(m.TupleMultiply(t)).To(tuple.Equal(tuple.New(18, 24, 33, 1)))
 		})
 	})
 

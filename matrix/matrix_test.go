@@ -342,7 +342,7 @@ var _ = Describe("Matrix", func() {
 		})
 	})
 
-	DescribeTable("more inverses", func(m, inv *matrix.Matrix) {
+	DescribeTable("more inverses", func(m, inv matrix.Matrix) {
 		Expect(m.Inverse()).To(matrix.Equal(inv))
 	},
 		Entry("1",

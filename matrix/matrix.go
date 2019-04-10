@@ -12,7 +12,7 @@ type Matrix struct {
 	values []float64
 }
 
-func New(rows, cols int, vals ...float64) *Matrix {
+func New(rows, cols int, vals ...float64) Matrix {
 	valsCopy := make([]float64, rows*cols)
 	copy(valsCopy, vals)
 	m := Matrix{
@@ -20,18 +20,18 @@ func New(rows, cols int, vals ...float64) *Matrix {
 		cols:   cols,
 		values: valsCopy,
 	}
-	return &m
+	return m
 }
 
-func (m *Matrix) Rows() int {
+func (m Matrix) Rows() int {
 	return m.rows
 }
 
-func (m *Matrix) Cols() int {
+func (m Matrix) Cols() int {
 	return m.cols
 }
 
-func (m *Matrix) Get(r, c int) float64 {
+func (m Matrix) Get(r, c int) float64 {
 	if r > m.rows-1 || c > m.cols-1 {
 		panic(fmt.Sprintf("row %d, col %d not contained in a %dx%d matrix", r, c, m.rows, m.cols))
 	}
@@ -42,11 +42,11 @@ func (m *Matrix) Get(r, c int) float64 {
 	return m.values[idx]
 }
 
-func (m *Matrix) Set(r, c int, v float64) {
+func (m Matrix) Set(r, c int, v float64) {
 	m.values[r*m.cols+c] = v
 }
 
-func (m *Matrix) Equals(n *Matrix) bool {
+func (m Matrix) Equals(n Matrix) bool {
 	if m.rows != n.rows || m.cols != n.cols {
 		return false
 	}
@@ -69,7 +69,7 @@ func floatEquals(a, b float64) bool {
 	return diff < EPSILON
 }
 
-func (m *Matrix) Multiply(n *Matrix) *Matrix {
+func (m Matrix) Multiply(n Matrix) Matrix {
 	out := New(m.rows, n.cols)
 
 	for r := 0; r < m.rows; r++ {
@@ -84,7 +84,7 @@ func (m *Matrix) Multiply(n *Matrix) *Matrix {
 	return out
 }
 
-func (m *Matrix) TupleMultiply(t tuple.Tuple) tuple.Tuple {
+func (m Matrix) TupleMultiply(t tuple.Tuple) tuple.Tuple {
 	tm := New(4, 1, t.X, t.Y, t.Z, t.W)
 	p := m.Multiply(tm)
 	return tuple.Tuple{
@@ -95,7 +95,7 @@ func (m *Matrix) TupleMultiply(t tuple.Tuple) tuple.Tuple {
 	}
 }
 
-func Identity(r, c int) *Matrix {
+func Identity(r, c int) Matrix {
 	m := New(r, c)
 
 	for i := 0; i < r; i++ {
@@ -104,7 +104,7 @@ func Identity(r, c int) *Matrix {
 	return m
 }
 
-func (m *Matrix) Transpose() *Matrix {
+func (m Matrix) Transpose() Matrix {
 	t := New(m.cols, m.rows)
 	for c := 0; c < m.rows; c++ {
 		for r := 0; r < m.cols; r++ {
@@ -114,7 +114,7 @@ func (m *Matrix) Transpose() *Matrix {
 	return t
 }
 
-func (m *Matrix) Determinant() float64 {
+func (m Matrix) Determinant() float64 {
 	if m.rows == 2 && m.cols == 2 {
 		return m.Get(0, 0)*m.Get(1, 1) - m.Get(0, 1)*m.Get(1, 0)
 	}
@@ -125,7 +125,7 @@ func (m *Matrix) Determinant() float64 {
 	return det
 }
 
-func (m *Matrix) Submatrix(r, c int) *Matrix {
+func (m Matrix) Submatrix(r, c int) Matrix {
 	o := New(m.rows-1, m.cols-1)
 	for i := 0; i < m.rows; i++ {
 		for j := 0; j < m.cols; j++ {
@@ -146,11 +146,11 @@ func (m *Matrix) Submatrix(r, c int) *Matrix {
 	return o
 }
 
-func (m *Matrix) Minor(r, c int) float64 {
+func (m Matrix) Minor(r, c int) float64 {
 	return m.Submatrix(r, c).Determinant()
 }
 
-func (m *Matrix) Cofactor(r, c int) float64 {
+func (m Matrix) Cofactor(r, c int) float64 {
 	min := m.Minor(r, c)
 	if (r+c)%2 == 1 {
 		min *= -1
@@ -158,11 +158,11 @@ func (m *Matrix) Cofactor(r, c int) float64 {
 	return min
 }
 
-func (m *Matrix) IsInvertible() bool {
+func (m Matrix) IsInvertible() bool {
 	return m.Determinant() != 0.0
 }
 
-func (m *Matrix) Inverse() *Matrix {
+func (m Matrix) Inverse() Matrix {
 	if !m.IsInvertible() {
 		panic("matrix is not invertible")
 	}

@@ -7,17 +7,17 @@ import (
 )
 
 type matrixMatcher struct {
-	expected *Matrix
+	expected Matrix
 }
 
-func Equal(expected *Matrix) types.GomegaMatcher {
+func Equal(expected Matrix) types.GomegaMatcher {
 	return &matrixMatcher{
 		expected: expected,
 	}
 }
 
 func (m *matrixMatcher) Match(actual interface{}) (success bool, err error) {
-	actualMatrix, ok := actual.(*Matrix)
+	actualMatrix, ok := actual.(Matrix)
 	if !ok {
 		return false, fmt.Errorf("matrix.Equal matcher expects a Matrix")
 	}

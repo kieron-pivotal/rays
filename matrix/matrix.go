@@ -1,7 +1,7 @@
 package matrix
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/kieron-pivotal/rays/tuple"
 )
@@ -31,9 +31,9 @@ func (m *Matrix) Cols() int {
 	return m.cols
 }
 
-func (m *Matrix) Val(r, c int) float64 {
+func (m *Matrix) Get(r, c int) float64 {
 	if r > m.rows-1 || c > m.cols-1 {
-		log.Panicf("row %d, col %d not contained in a %dx%d matrix", r, c, m.rows, m.cols)
+		panic(fmt.Sprintf("row %d, col %d not contained in a %dx%d matrix", r, c, m.rows, m.cols))
 	}
 	idx := r*m.cols + c
 	if idx > len(m.values)-1 {
@@ -52,7 +52,7 @@ func (m *Matrix) Equals(n *Matrix) bool {
 	}
 	for r := 0; r < m.rows; r++ {
 		for c := 0; c < m.cols; c++ {
-			if !floatEquals(m.Val(r, c), n.Val(r, c)) {
+			if !floatEquals(m.Get(r, c), n.Get(r, c)) {
 				return false
 			}
 		}
@@ -76,7 +76,7 @@ func (m *Matrix) Multiply(n *Matrix) *Matrix {
 		for c := 0; c < n.cols; c++ {
 			var v float64
 			for i := 0; i < m.cols; i++ {
-				v += out.Val(r, c) + m.Val(r, i)*n.Val(i, c)
+				v += out.Get(r, c) + m.Get(r, i)*n.Get(i, c)
 			}
 			out.Set(r, c, v)
 		}
@@ -108,8 +108,70 @@ func (m *Matrix) Transpose() *Matrix {
 	t := New(m.cols, m.rows)
 	for c := 0; c < m.rows; c++ {
 		for r := 0; r < m.cols; r++ {
-			t.Set(r, c, m.Val(c, r))
+			t.Set(r, c, m.Get(c, r))
 		}
 	}
 	return t
+}
+
+func (m *Matrix) Determinant() float64 {
+	if m.rows == 2 && m.cols == 2 {
+		return m.Get(0, 0)*m.Get(1, 1) - m.Get(0, 1)*m.Get(1, 0)
+	}
+	det := float64(0)
+	for i := 0; i < m.cols; i++ {
+		det += m.Get(0, i) * m.Cofactor(0, i)
+	}
+	return det
+}
+
+func (m *Matrix) Submatrix(r, c int) *Matrix {
+	o := New(m.rows-1, m.cols-1)
+	for i := 0; i < m.rows; i++ {
+		for j := 0; j < m.cols; j++ {
+			if i == r || j == c {
+				continue
+			}
+			row := i
+			if row > r {
+				row--
+			}
+			col := j
+			if col > c {
+				col--
+			}
+			o.Set(row, col, m.Get(i, j))
+		}
+	}
+	return o
+}
+
+func (m *Matrix) Minor(r, c int) float64 {
+	return m.Submatrix(r, c).Determinant()
+}
+
+func (m *Matrix) Cofactor(r, c int) float64 {
+	min := m.Minor(r, c)
+	if (r+c)%2 == 1 {
+		min *= -1
+	}
+	return min
+}
+
+func (m *Matrix) IsInvertible() bool {
+	return m.Determinant() != 0.0
+}
+
+func (m *Matrix) Inverse() *Matrix {
+	if !m.IsInvertible() {
+		panic("matrix is not invertible")
+	}
+	det := m.Determinant()
+	n := New(m.rows, m.cols)
+	for r := 0; r < m.rows; r++ {
+		for c := 0; c < m.cols; c++ {
+			n.Set(c, r, m.Cofactor(r, c)/det)
+		}
+	}
+	return n
 }

@@ -44,7 +44,7 @@ func (c Color) Multiply(f float64) Color {
 
 func (c Color) ColorMultiply(d Color) Color {
 	return Color{
-		tuple: c.tuple.BitwiseMultiply(d.tuple),
+		tuple: c.tuple.ComponentwiseMultiply(d.tuple),
 	}
 }
 

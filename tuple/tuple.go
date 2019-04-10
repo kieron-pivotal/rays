@@ -86,7 +86,7 @@ func (t Tuple) Divide(c float64) Tuple {
 	}
 }
 
-func (t Tuple) BitwiseMultiply(s Tuple) Tuple {
+func (t Tuple) ComponentwiseMultiply(s Tuple) Tuple {
 	return Tuple{
 		X: t.X * s.X,
 		Y: t.Y * s.Y,

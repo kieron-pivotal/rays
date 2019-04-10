@@ -13,7 +13,12 @@ var _ = Describe("Matrix", func() {
 	Context("construction", func() {
 
 		It("can create a 4x4 matrix with contents", func() {
-			m := matrix.New(4, 4, 1, 2, 3, 4, 5.5, 6.5, 7.5, 8.5, 9, 10, 11, 12, 13.5, 14.5, 15.5, 16.5)
+			m := matrix.New(4, 4,
+				1, 2, 3, 4, 5.5,
+				6.5, 7.5, 8.5, 9,
+				10, 11, 12, 13.5,
+				14.5, 15.5, 16.5,
+			)
 
 			Expect(m.Rows()).To(Equal(4))
 			Expect(m.Cols()).To(Equal(4))
@@ -28,7 +33,12 @@ var _ = Describe("Matrix", func() {
 		})
 
 		It("panics when value accessed outside of range", func() {
-			m := matrix.New(4, 4, 1, 2, 3, 4, 5.5, 6.5, 7.5, 8.5, 9, 10, 11, 12, 13.5, 14.5, 15.5, 16.5)
+			m := matrix.New(4, 4,
+				1, 2, 3, 4, 5.5,
+				6.5, 7.5, 8.5, 9,
+				10, 11, 12, 13.5,
+				14.5, 15.5, 16.5,
+			)
 			Expect(func() { m.Get(4, 4) }).To(Panic())
 		})
 
@@ -46,7 +56,10 @@ var _ = Describe("Matrix", func() {
 		})
 
 		It("can produce different sized matrices", func() {
-			m := matrix.New(2, 2, -3, 5, 1, -2)
+			m := matrix.New(2, 2,
+				-3, 5,
+				1, -2,
+			)
 			Expect(m.Get(0, 0)).To(BeNumerically("~", -3))
 			Expect(m.Get(0, 1)).To(BeNumerically("~", 5))
 			Expect(m.Get(1, 0)).To(BeNumerically("~", 1))
@@ -54,7 +67,11 @@ var _ = Describe("Matrix", func() {
 		})
 
 		It("can do a 3x3 too", func() {
-			m := matrix.New(3, 3, -3, 5, 0, 1, -2, 7, 0, 1, 1)
+			m := matrix.New(3, 3,
+				-3, 5, 0,
+				1, -2, 7,
+				0, 1, 1,
+			)
 			Expect(m.Get(0, 0)).To(BeNumerically("~", -3))
 			Expect(m.Get(1, 1)).To(BeNumerically("~", -2))
 			Expect(m.Get(2, 2)).To(BeNumerically("~", 1))
@@ -63,27 +80,67 @@ var _ = Describe("Matrix", func() {
 
 	Context("equality", func() {
 		It("can see two identical matrices are the same", func() {
-			m1 := matrix.New(4, 4, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2)
-			m2 := matrix.New(4, 4, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2)
+			m1 := matrix.New(4, 4,
+				1, 2, 3, 4,
+				5, 6, 7, 8,
+				9, 8, 7, 6,
+				5, 4, 3, 2,
+			)
+			m2 := matrix.New(4, 4,
+				1, 2, 3, 4,
+				5, 6, 7, 8,
+				9, 8, 7, 6,
+				5, 4, 3, 2,
+			)
 			Expect(m1.Equals(m2)).To(BeTrue())
 		})
 		It("can see two different matrices are not the same", func() {
-			m1 := matrix.New(4, 4, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1)
-			m2 := matrix.New(4, 4, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2)
+			m1 := matrix.New(4, 4,
+				2, 3, 4, 5,
+				6, 7, 8, 9,
+				8, 7, 6, 5,
+				4, 3, 2, 1,
+			)
+			m2 := matrix.New(4, 4,
+				1, 2, 3, 4,
+				5, 6, 7, 8,
+				9, 8, 7, 6,
+				5, 4, 3, 2,
+			)
 			Expect(m1.Equals(m2)).To(BeFalse())
 		})
 	})
 
 	Context("matrix multiplication", func() {
 		It("can multiply two 4x4 matrices", func() {
-			m1 := matrix.New(4, 4, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2)
-			m2 := matrix.New(4, 4, -2, 1, 2, 3, 3, 2, 1, -1, 4, 3, 6, 5, 1, 2, 7, 8)
-			prod := matrix.New(4, 4, 20, 22, 50, 48, 44, 54, 114, 108, 40, 58, 110, 102, 16, 26, 46, 42)
+			m1 := matrix.New(4, 4,
+				1, 2, 3, 4,
+				5, 6, 7, 8,
+				9, 8, 7, 6,
+				5, 4, 3, 2,
+			)
+			m2 := matrix.New(4, 4,
+				-2, 1, 2, 3,
+				3, 2, 1, -1,
+				4, 3, 6, 5,
+				1, 2, 7, 8,
+			)
+			prod := matrix.New(4, 4,
+				20, 22, 50, 48,
+				44, 54, 114, 108,
+				40, 58, 110, 102,
+				16, 26, 46, 42,
+			)
 			Expect(m1.Multiply(m2)).To(matrix.Equal(prod))
 		})
 
 		It("is original matrix when multiplied by identity matrix", func() {
-			m1 := matrix.New(4, 4, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2)
+			m1 := matrix.New(4, 4,
+				1, 2, 3, 4,
+				5, 6, 7, 8,
+				9, 8, 7, 6,
+				5, 4, 3, 2,
+			)
 			id := matrix.Identity(4, 4)
 			Expect(m1.Multiply(id)).To(matrix.Equal(m1))
 
@@ -92,7 +149,12 @@ var _ = Describe("Matrix", func() {
 
 	Context("tuple multiplication", func() {
 		It("can multiply a matrix by a tuple", func() {
-			m := matrix.New(4, 4, 1, 2, 3, 4, 2, 4, 4, 2, 8, 6, 4, 1, 0, 0, 0, 1)
+			m := matrix.New(4, 4,
+				1, 2, 3, 4,
+				2, 4, 4, 2,
+				8, 6, 4, 1,
+				0, 0, 0, 1,
+			)
 			t := tuple.New(1, 2, 3, 1)
 			Expect(m.TupleMultiply(t)).To(tuple.Equal(tuple.New(18, 24, 33, 1)))
 		})
@@ -100,8 +162,18 @@ var _ = Describe("Matrix", func() {
 
 	Context("transposition", func() {
 		It("can transpose a matrix", func() {
-			m := matrix.New(4, 4, 0, 9, 3, 0, 9, 8, 0, 8, 1, 8, 5, 3, 0, 0, 5, 8)
-			t := matrix.New(4, 4, 0, 9, 1, 0, 9, 8, 8, 0, 3, 0, 5, 5, 0, 8, 3, 8)
+			m := matrix.New(4, 4,
+				0, 9, 3, 0,
+				9, 8, 0, 8,
+				1, 8, 5, 3,
+				0, 0, 5, 8,
+			)
+			t := matrix.New(4, 4,
+				0, 9, 1, 0,
+				9, 8, 8, 0,
+				3, 0, 5, 5,
+				0, 8, 3, 8,
+			)
 			Expect(m.Transpose()).To(matrix.Equal(t))
 		})
 
@@ -113,7 +185,10 @@ var _ = Describe("Matrix", func() {
 
 	Context("determinants", func() {
 		It("can calculate a 2x2 determinant", func() {
-			m := matrix.New(2, 2, 1, 5, -3, 2)
+			m := matrix.New(2, 2,
+				1, 5,
+				-3, 2,
+			)
 			Expect(m.Determinant()).To(BeNumerically("~", 17))
 		})
 
@@ -146,8 +221,15 @@ var _ = Describe("Matrix", func() {
 
 	Context("submatrices", func() {
 		It("gives a 2x2 submatrix of a 3x3 matrix", func() {
-			m3 := matrix.New(3, 3, 1, 5, 0, -3, 2, 7, 0, 6, -3)
-			m2 := matrix.New(2, 2, -3, 2, 0, 6)
+			m3 := matrix.New(3, 3,
+				1, 5, 0,
+				-3, 2, 7,
+				0, 6, -3,
+			)
+			m2 := matrix.New(2, 2,
+				-3, 2,
+				0, 6,
+			)
 			Expect(m3.Submatrix(0, 2)).To(matrix.Equal(m2))
 		})
 

@@ -1,4 +1,4 @@
-package geometry
+package tuple
 
 import (
 	"log"
@@ -14,7 +14,7 @@ type Tuple struct {
 	W float64
 }
 
-func NewTuple(x, y, z, w float64) Tuple {
+func New(x, y, z, w float64) Tuple {
 	return Tuple{X: x, Y: y, Z: z, W: w}
 }
 

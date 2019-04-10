@@ -3,24 +3,24 @@ package tuple_matcher
 import (
 	"fmt"
 
-	"github.com/kieron-pivotal/rays/geometry"
+	"github.com/kieron-pivotal/rays/tuple"
 	"github.com/onsi/gomega/types"
 )
 
 type tupleMatcher struct {
-	expected geometry.Tuple
+	expected tuple.Tuple
 }
 
-func Equal(expected geometry.Tuple) types.GomegaMatcher {
+func Equal(expected tuple.Tuple) types.GomegaMatcher {
 	return &tupleMatcher{
 		expected: expected,
 	}
 }
 
 func (m *tupleMatcher) Match(actual interface{}) (success bool, err error) {
-	actualTuple, ok := actual.(geometry.Tuple)
+	actualTuple, ok := actual.(tuple.Tuple)
 	if !ok {
-		return false, fmt.Errorf("EqualsTuple matcher expects a geometry.Tuple")
+		return false, fmt.Errorf("EqualsTuple matcher expects a tuple.Tuple")
 	}
 
 	return actualTuple.Equals(m.expected), nil

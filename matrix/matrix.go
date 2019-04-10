@@ -3,7 +3,7 @@ package matrix
 import (
 	"log"
 
-	"github.com/kieron-pivotal/rays/geometry"
+	"github.com/kieron-pivotal/rays/tuple"
 )
 
 type Matrix struct {
@@ -74,18 +74,20 @@ func (m *Matrix) Multiply(n *Matrix) *Matrix {
 
 	for r := 0; r < m.rows; r++ {
 		for c := 0; c < n.cols; c++ {
+			var v float64
 			for i := 0; i < m.cols; i++ {
-				out.Set(r, c, out.Val(r, c)+m.Val(r, i)*n.Val(i, c))
+				v += out.Val(r, c) + m.Val(r, i)*n.Val(i, c)
 			}
+			out.Set(r, c, v)
 		}
 	}
 	return out
 }
 
-func (m *Matrix) TupleMultiply(t geometry.Tuple) geometry.Tuple {
+func (m *Matrix) TupleMultiply(t tuple.Tuple) tuple.Tuple {
 	tm := New(4, 1, t.X, t.Y, t.Z, t.W)
 	p := m.Multiply(tm)
-	return geometry.Tuple{
+	return tuple.Tuple{
 		X: p.values[0],
 		Y: p.values[1],
 		Z: p.values[2],

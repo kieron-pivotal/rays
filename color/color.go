@@ -1,14 +1,14 @@
 package color
 
-import "github.com/kieron-pivotal/rays/geometry"
+import "github.com/kieron-pivotal/rays/tuple"
 
 type Color struct {
-	tuple geometry.Tuple
+	tuple tuple.Tuple
 }
 
 func New(r, g, b float64) Color {
 	return Color{
-		tuple: geometry.Vector(r, g, b),
+		tuple: tuple.Vector(r, g, b),
 	}
 }
 

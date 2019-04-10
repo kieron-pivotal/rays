@@ -1,4 +1,4 @@
-package geometry_test
+package tuple_test
 
 import (
 	. "github.com/onsi/ginkgo"
@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestGeometry(t *testing.T) {
+func TestTuple(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Geometry Suite")
+	RunSpecs(t, "Tuple Suite")
 }

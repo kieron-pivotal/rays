@@ -48,3 +48,11 @@ var _ = Describe("scaling", func() {
 		Expect(scaling.Inverse().TupleMultiply(vector)).To(tuple.Equal(tuple.Vector(-2, 2, 2)))
 	})
 })
+
+var _ = Describe("reflection", func() {
+	It("can reflect by scaling by a negative value", func() {
+		reflect := matrix.Scaling(-1, 1, 1)
+		point := tuple.Point(2, 3, 4)
+		Expect(reflect.TupleMultiply(point)).To(tuple.Equal(tuple.Point(-2, 3, 4)))
+	})
+})

@@ -14,10 +14,10 @@ var _ = Describe("Matrix", func() {
 
 		It("can create a 4x4 matrix with contents", func() {
 			m := matrix.New(4, 4,
-				1, 2, 3, 4, 5.5,
-				6.5, 7.5, 8.5, 9,
-				10, 11, 12, 13.5,
-				14.5, 15.5, 16.5,
+				1, 2, 3, 4,
+				5.5, 6.5, 7.5, 8.5,
+				9, 10, 11, 12,
+				13.5, 14.5, 15.5, 16.5,
 			)
 
 			Expect(m.Rows()).To(Equal(4))
@@ -34,10 +34,10 @@ var _ = Describe("Matrix", func() {
 
 		It("panics when value accessed outside of range", func() {
 			m := matrix.New(4, 4,
-				1, 2, 3, 4, 5.5,
-				6.5, 7.5, 8.5, 9,
-				10, 11, 12, 13.5,
-				14.5, 15.5, 16.5,
+				1, 2, 3, 4,
+				5.5, 6.5, 7.5, 8.5,
+				9, 10, 11, 12,
+				13.5, 14.5, 15.5, 16.5,
 			)
 			Expect(func() { m.Get(4, 4) }).To(Panic())
 		})

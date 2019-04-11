@@ -102,3 +102,30 @@ var _ = DescribeTable("shearing", func(shear matrix.Matrix, point, result tuple.
 	Entry("z wrt x", matrix.Shear(0, 0, 0, 0, 1, 0), tuple.Point(2, 3, 4), tuple.Point(2, 3, 6)),
 	Entry("z wrt y", matrix.Shear(0, 0, 0, 0, 0, 1), tuple.Point(2, 3, 4), tuple.Point(2, 3, 7)),
 )
+
+var _ = Describe("combination", func() {
+	var (
+		p = tuple.Point(1, 0, 1)
+		a = matrix.RotationX(math.Pi / 2)
+		b = matrix.Scaling(5, 5, 5)
+		c = matrix.Translation(10, 5, 7)
+	)
+	It("applies transformations in sequence", func() {
+		p2 := a.TupleMultiply(p)
+		Expect(p2).To(tuple.Equal(tuple.Point(1, -1, 0)))
+		p3 := b.TupleMultiply(p2)
+		Expect(p3).To(tuple.Equal(tuple.Point(5, -5, 0)))
+		p4 := c.TupleMultiply(p3)
+		Expect(p4).To(tuple.Equal(tuple.Point(15, 0, 7)))
+	})
+
+	It("chained transformations are applied in backwards order", func() {
+		t := c.Multiply(b).Multiply(a)
+		Expect(t.TupleMultiply(p)).To(tuple.Equal(tuple.Point(15, 0, 7)))
+	})
+
+	It("can be written in a fluent style", func() {
+		t := matrix.Identity(4, 4).RotationX(math.Pi/2).Scaling(5, 5, 5).Translation(10, 5, 7)
+		Expect(t.TupleMultiply(p)).To(tuple.Equal(tuple.Point(15, 0, 7)))
+	})
+})

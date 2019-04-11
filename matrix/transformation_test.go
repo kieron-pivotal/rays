@@ -1,6 +1,8 @@
 package matrix_test
 
 import (
+	"math"
+
 	"github.com/kieron-pivotal/rays/matrix"
 	"github.com/kieron-pivotal/rays/tuple"
 
@@ -54,5 +56,37 @@ var _ = Describe("reflection", func() {
 		reflect := matrix.Scaling(-1, 1, 1)
 		point := tuple.Point(2, 3, 4)
 		Expect(reflect.TupleMultiply(point)).To(tuple.Equal(tuple.Point(-2, 3, 4)))
+	})
+})
+
+var _ = Describe("rotation", func() {
+	It("can rotate about x-axis", func() {
+		eighthTurn := matrix.RotationX(math.Pi / 4)
+		quarterTurn := matrix.RotationX(math.Pi / 2)
+		point := tuple.Point(0, 1, 0)
+		Expect(eighthTurn.TupleMultiply(point)).To(tuple.Equal(tuple.Point(0, math.Sqrt(2)/2, math.Sqrt(2)/2)))
+		Expect(quarterTurn.TupleMultiply(point)).To(tuple.Equal(tuple.Point(0, 0, 1)))
+	})
+
+	It("rotates the other way with an inverse", func() {
+		eighthTurn := matrix.RotationX(math.Pi / 4)
+		point := tuple.Point(0, 1, 0)
+		Expect(eighthTurn.Inverse().TupleMultiply(point)).To(tuple.Equal(tuple.Point(0, math.Sqrt(2)/2, -math.Sqrt(2)/2)))
+	})
+
+	It("can rotate about the y-axis", func() {
+		eighthTurn := matrix.RotationY(math.Pi / 4)
+		quarterTurn := matrix.RotationY(math.Pi / 2)
+		point := tuple.Point(0, 0, 1)
+		Expect(eighthTurn.TupleMultiply(point)).To(tuple.Equal(tuple.Point(math.Sqrt(2)/2, 0, math.Sqrt(2)/2)))
+		Expect(quarterTurn.TupleMultiply(point)).To(tuple.Equal(tuple.Point(1, 0, 0)))
+	})
+
+	It("can rotate about the z-axis", func() {
+		eighthTurn := matrix.RotationZ(math.Pi / 4)
+		quarterTurn := matrix.RotationZ(math.Pi / 2)
+		point := tuple.Point(0, 1, 0)
+		Expect(eighthTurn.TupleMultiply(point)).To(tuple.Equal(tuple.Point(-math.Sqrt(2)/2, math.Sqrt(2)/2, 0)))
+		Expect(quarterTurn.TupleMultiply(point)).To(tuple.Equal(tuple.Point(-1, 0, 0)))
 	})
 })

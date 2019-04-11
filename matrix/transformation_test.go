@@ -95,12 +95,12 @@ var _ = Describe("rotation", func() {
 var _ = DescribeTable("shearing", func(shear matrix.Matrix, point, result tuple.Tuple) {
 	Expect(shear.TupleMultiply(point)).To(tuple.Equal(result))
 },
-	Entry("x wrt y", matrix.Shear(1, 0, 0, 0, 0, 0), tuple.Point(2, 3, 4), tuple.Point(5, 3, 4)),
-	Entry("x wrt z", matrix.Shear(0, 1, 0, 0, 0, 0), tuple.Point(2, 3, 4), tuple.Point(6, 3, 4)),
-	Entry("y wrt x", matrix.Shear(0, 0, 1, 0, 0, 0), tuple.Point(2, 3, 4), tuple.Point(2, 5, 4)),
-	Entry("y wrt z", matrix.Shear(0, 0, 0, 1, 0, 0), tuple.Point(2, 3, 4), tuple.Point(2, 7, 4)),
-	Entry("z wrt x", matrix.Shear(0, 0, 0, 0, 1, 0), tuple.Point(2, 3, 4), tuple.Point(2, 3, 6)),
-	Entry("z wrt y", matrix.Shear(0, 0, 0, 0, 0, 1), tuple.Point(2, 3, 4), tuple.Point(2, 3, 7)),
+	Entry("x wrt y", matrix.Shearing(1, 0, 0, 0, 0, 0), tuple.Point(2, 3, 4), tuple.Point(5, 3, 4)),
+	Entry("x wrt z", matrix.Shearing(0, 1, 0, 0, 0, 0), tuple.Point(2, 3, 4), tuple.Point(6, 3, 4)),
+	Entry("y wrt x", matrix.Shearing(0, 0, 1, 0, 0, 0), tuple.Point(2, 3, 4), tuple.Point(2, 5, 4)),
+	Entry("y wrt z", matrix.Shearing(0, 0, 0, 1, 0, 0), tuple.Point(2, 3, 4), tuple.Point(2, 7, 4)),
+	Entry("z wrt x", matrix.Shearing(0, 0, 0, 0, 1, 0), tuple.Point(2, 3, 4), tuple.Point(2, 3, 6)),
+	Entry("z wrt y", matrix.Shearing(0, 0, 0, 0, 0, 1), tuple.Point(2, 3, 4), tuple.Point(2, 3, 7)),
 )
 
 var _ = Describe("combination", func() {
@@ -125,7 +125,7 @@ var _ = Describe("combination", func() {
 	})
 
 	It("can be written in a fluent style", func() {
-		t := matrix.Identity(4, 4).RotationX(math.Pi/2).Scaling(5, 5, 5).Translation(10, 5, 7)
+		t := matrix.Identity(4, 4).RotateX(math.Pi/2).Scale(5, 5, 5).Translate(10, 5, 7)
 		Expect(t.TupleMultiply(p)).To(tuple.Equal(tuple.Point(15, 0, 7)))
 	})
 })

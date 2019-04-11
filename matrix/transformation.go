@@ -10,7 +10,7 @@ func Translation(x, y, z float64) Matrix {
 	return m
 }
 
-func (m Matrix) Translation(x, y, z float64) Matrix {
+func (m Matrix) Translate(x, y, z float64) Matrix {
 	t := Translation(x, y, z)
 	return t.Multiply(m)
 }
@@ -23,7 +23,7 @@ func Scaling(x, y, z float64) Matrix {
 	return m
 }
 
-func (m Matrix) Scaling(x, y, z float64) Matrix {
+func (m Matrix) Scale(x, y, z float64) Matrix {
 	t := Scaling(x, y, z)
 	return m.Multiply(t)
 }
@@ -37,7 +37,7 @@ func RotationX(a float64) Matrix {
 	return m
 }
 
-func (m Matrix) RotationX(a float64) Matrix {
+func (m Matrix) RotateX(a float64) Matrix {
 	t := RotationX(a)
 	return m.Multiply(t)
 }
@@ -51,7 +51,7 @@ func RotationY(a float64) Matrix {
 	return m
 }
 
-func (m Matrix) RotationY(a float64) Matrix {
+func (m Matrix) RotateY(a float64) Matrix {
 	t := RotationY(a)
 	return m.Multiply(t)
 }
@@ -65,12 +65,12 @@ func RotationZ(a float64) Matrix {
 	return m
 }
 
-func (m Matrix) RotationZ(a float64) Matrix {
+func (m Matrix) RotateZ(a float64) Matrix {
 	t := RotationZ(a)
 	return m.Multiply(t)
 }
 
-func Shear(xy, xz, yx, yz, zx, zy float64) Matrix {
+func Shearing(xy, xz, yx, yz, zx, zy float64) Matrix {
 	m := Identity(4, 4)
 	m.Set(0, 1, xy)
 	m.Set(0, 2, xz)
@@ -82,6 +82,6 @@ func Shear(xy, xz, yx, yz, zx, zy float64) Matrix {
 }
 
 func (m Matrix) Shear(xy, xz, yx, yz, zx, zy float64) Matrix {
-	t := Shear(xy, xz, yx, yz, zx, zy)
+	t := Shearing(xy, xz, yx, yz, zx, zy)
 	return m.Multiply(t)
 }

@@ -23,9 +23,9 @@ var _ = Describe("Clock", func() {
 		for i := 0; i < count; i++ {
 			p := tuple.Point(1, 0, 0)
 			t := matrix.Identity(4, 4).
-				RotationZ(float64(i)*2*math.Pi/float64(count)).
-				Scaling(250, 250, 250).
-				Translation(300, 300, 0)
+				RotateZ(float64(i)*2*math.Pi/float64(count)).
+				Scale(250, 250, 250).
+				Translate(300, 300, 0)
 
 			p = t.TupleMultiply(p)
 			c.SetPixel(int(math.Round(p.X)), int(math.Round(p.Y)), col)

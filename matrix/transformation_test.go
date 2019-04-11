@@ -7,6 +7,7 @@ import (
 	"github.com/kieron-pivotal/rays/tuple"
 
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 )
 
@@ -90,3 +91,14 @@ var _ = Describe("rotation", func() {
 		Expect(quarterTurn.TupleMultiply(point)).To(tuple.Equal(tuple.Point(-1, 0, 0)))
 	})
 })
+
+var _ = DescribeTable("shearing", func(shear matrix.Matrix, point, result tuple.Tuple) {
+	Expect(shear.TupleMultiply(point)).To(tuple.Equal(result))
+},
+	Entry("x wrt y", matrix.Shear(1, 0, 0, 0, 0, 0), tuple.Point(2, 3, 4), tuple.Point(5, 3, 4)),
+	Entry("x wrt z", matrix.Shear(0, 1, 0, 0, 0, 0), tuple.Point(2, 3, 4), tuple.Point(6, 3, 4)),
+	Entry("y wrt x", matrix.Shear(0, 0, 1, 0, 0, 0), tuple.Point(2, 3, 4), tuple.Point(2, 5, 4)),
+	Entry("y wrt z", matrix.Shear(0, 0, 0, 1, 0, 0), tuple.Point(2, 3, 4), tuple.Point(2, 7, 4)),
+	Entry("z wrt x", matrix.Shear(0, 0, 0, 0, 1, 0), tuple.Point(2, 3, 4), tuple.Point(2, 3, 6)),
+	Entry("z wrt y", matrix.Shear(0, 0, 0, 0, 0, 1), tuple.Point(2, 3, 4), tuple.Point(2, 3, 7)),
+)

@@ -210,4 +210,18 @@ var _ = Describe("Tuple", func() {
 			Expect(w.Cross(v)).To(tuple.Equal(tuple.Vector(1, -2, 1)))
 		})
 	})
+
+	Context("reflecting in vector", func() {
+		r2 := math.Sqrt(2)
+
+		DescribeTable("various reflections",
+			func(in, normal, reflected tuple.Tuple) {
+				Expect(in.Reflect(normal)).To(tuple.Equal(reflected))
+			},
+
+			Entry("45 degs", tuple.Vector(1, -1, 0), tuple.Vector(0, 1, 0), tuple.Vector(1, 1, 0)),
+			Entry("slanted surface", tuple.Vector(0, -1, 0), tuple.Vector(r2/2, r2/2, 0), tuple.Vector(1, 0, 0)),
+		)
+
+	})
 })

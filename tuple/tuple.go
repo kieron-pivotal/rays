@@ -133,3 +133,7 @@ func floatEquals(f, g float64) bool {
 	}
 	return diff < EPSILON
 }
+
+func (t Tuple) Reflect(normal Tuple) Tuple {
+	return t.Subtract(normal.Multiply(normal.Dot(t) * 2))
+}

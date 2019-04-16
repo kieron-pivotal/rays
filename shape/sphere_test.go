@@ -1,12 +1,15 @@
 package shape_test
 
 import (
+	"math"
+
 	"github.com/kieron-pivotal/rays/matrix"
 	"github.com/kieron-pivotal/rays/ray"
 	"github.com/kieron-pivotal/rays/shape"
 	"github.com/kieron-pivotal/rays/tuple"
 
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 )
 
@@ -104,6 +107,48 @@ var _ = Describe("Sphere", func() {
 
 			Expect(xs.Count()).To(Equal(0))
 		})
+	})
+
+	Context("normal", func() {
+
+		var (
+			s  *shape.Sphere
+			r2 = math.Sqrt(2)
+			r3 = math.Sqrt(3)
+		)
+
+		DescribeTable("calculating the normal on the unit sphere centered on origin",
+			func(point, normal tuple.Tuple) {
+				s = shape.NewSphere()
+				Expect(s.NormalAt(point)).To(tuple.Equal(normal))
+				Expect(normal).To(tuple.Equal(normal.Normalize()))
+			},
+
+			Entry("1, 0, 0", tuple.Point(1, 0, 0), tuple.Vector(1, 0, 0)),
+			Entry("0, 1, 0", tuple.Point(0, 1, 0), tuple.Vector(0, 1, 0)),
+			Entry("0, 0, 1", tuple.Point(0, 0, 1), tuple.Vector(0, 0, 1)),
+			Entry("r3/3, ...", tuple.Point(r3/3, r3/3, r3/3), tuple.Vector(r3/3, r3/3, r3/3)),
+		)
+
+		DescribeTable("calculating the normal on a transformed unit sphere",
+			func(point tuple.Tuple, transformation matrix.Matrix, normal tuple.Tuple) {
+				s = shape.NewSphere()
+				s.SetTransform(transformation)
+				Expect(s.NormalAt(point)).To(tuple.Equal(normal))
+				Expect(normal).To(tuple.Equal(normal.Normalize()))
+			},
+
+			Entry("translation",
+				tuple.Point(0, 1.70711, -0.70711),
+				matrix.Translation(0, 1, 0),
+				tuple.Vector(0, 0.70711, -0.70711)),
+
+			Entry("scale and rotation",
+				tuple.Point(0, r2/2, -r2/2),
+				matrix.Identity(4, 4).RotateZ(math.Pi/5).Scale(1, 0.5, 1),
+				tuple.Vector(0, 0.97014, -0.24254)),
+		)
+
 	})
 
 })

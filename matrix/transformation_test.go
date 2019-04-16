@@ -128,4 +128,10 @@ var _ = Describe("combination", func() {
 		t := matrix.Identity(4, 4).RotateX(math.Pi/2).Scale(5, 5, 5).Translate(10, 5, 7)
 		Expect(t.TupleMultiply(p)).To(tuple.Equal(tuple.Point(15, 0, 7)))
 	})
+
+	It("equals the same transformation done literally (in reverse order)", func() {
+		t := matrix.Identity(4, 4).Translate(4, -1, 3).RotateX(math.Pi/2).Scale(1, 3, -2)
+		expectedT := matrix.Scaling(1, 3, -2).Multiply(matrix.RotationX(math.Pi / 2)).Multiply(matrix.Translation(4, -1, 3))
+		Expect(t).To(matrix.Equal(expectedT))
+	})
 })

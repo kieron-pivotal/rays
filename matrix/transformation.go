@@ -25,7 +25,7 @@ func Scaling(x, y, z float64) Matrix {
 
 func (m Matrix) Scale(x, y, z float64) Matrix {
 	t := Scaling(x, y, z)
-	return m.Multiply(t)
+	return t.Multiply(m)
 }
 
 func RotationX(a float64) Matrix {
@@ -39,7 +39,7 @@ func RotationX(a float64) Matrix {
 
 func (m Matrix) RotateX(a float64) Matrix {
 	t := RotationX(a)
-	return m.Multiply(t)
+	return t.Multiply(m)
 }
 
 func RotationY(a float64) Matrix {
@@ -53,7 +53,7 @@ func RotationY(a float64) Matrix {
 
 func (m Matrix) RotateY(a float64) Matrix {
 	t := RotationY(a)
-	return m.Multiply(t)
+	return t.Multiply(m)
 }
 
 func RotationZ(a float64) Matrix {
@@ -67,7 +67,7 @@ func RotationZ(a float64) Matrix {
 
 func (m Matrix) RotateZ(a float64) Matrix {
 	t := RotationZ(a)
-	return m.Multiply(t)
+	return t.Multiply(m)
 }
 
 func Shearing(xy, xz, yx, yz, zx, zy float64) Matrix {
@@ -83,5 +83,5 @@ func Shearing(xy, xz, yx, yz, zx, zy float64) Matrix {
 
 func (m Matrix) Shear(xy, xz, yx, yz, zx, zy float64) Matrix {
 	t := Shearing(xy, xz, yx, yz, zx, zy)
-	return m.Multiply(t)
+	return t.Multiply(m)
 }

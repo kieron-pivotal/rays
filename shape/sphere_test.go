@@ -155,7 +155,7 @@ var _ = Describe("Sphere", func() {
 	Context("material", func() {
 		It("has a default material", func() {
 			s := shape.NewSphere()
-			Expect(s.Material()).To(Equal(material.Default()))
+			Expect(s.Material()).To(Equal(material.New()))
 		})
 
 		It("can be assigned a material", func() {

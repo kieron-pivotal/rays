@@ -16,7 +16,7 @@ import (
 var _ = Describe("Material", func() {
 
 	It("has default vals", func() {
-		m := material.Default()
+		m := material.New()
 		Expect(m.Color).To(color.Equal(color.New(1, 1, 1)))
 		Expect(m.Ambient).To(BeNumerically("~", 0.1))
 		Expect(m.Diffuse).To(BeNumerically("~", 0.9))
@@ -33,7 +33,7 @@ var _ = Describe("Material", func() {
 
 		BeforeEach(func() {
 			p = tuple.Point(0, 0, 0)
-			m = material.Default()
+			m = material.New()
 		})
 
 		DescribeTable("lighting",

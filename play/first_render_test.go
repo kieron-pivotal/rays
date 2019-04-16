@@ -52,7 +52,7 @@ var _ = Describe("FirstRender", func() {
 		wallX := float64(10)
 		wallSize := float64(7)
 		canvasPixels := 600
-		m := material.Default()
+		m := material.New()
 		m.Color = color.New(1, 0.2, 1)
 
 		pixelSize := wallSize / float64(canvasPixels)

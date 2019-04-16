@@ -19,7 +19,7 @@ func NewSphere() *Sphere {
 	s := Sphere{
 		id:        GetNextCounter(),
 		transform: matrix.Identity(4, 4),
-		material:  material.Default(),
+		material:  material.New(),
 	}
 	return &s
 }

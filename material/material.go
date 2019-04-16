@@ -16,7 +16,7 @@ type Material struct {
 	Shininess float64
 }
 
-func Default() Material {
+func New() Material {
 	return Material{
 		Color:     color.New(1, 1, 1),
 		Ambient:   0.1,

@@ -3,6 +3,7 @@ package shape_test
 import (
 	"math"
 
+	"github.com/kieron-pivotal/rays/material"
 	"github.com/kieron-pivotal/rays/matrix"
 	"github.com/kieron-pivotal/rays/ray"
 	"github.com/kieron-pivotal/rays/shape"
@@ -149,6 +150,22 @@ var _ = Describe("Sphere", func() {
 				tuple.Vector(0, 0.97014, -0.24254)),
 		)
 
+	})
+
+	Context("material", func() {
+		It("has a default material", func() {
+			s := shape.NewSphere()
+			Expect(s.Material()).To(Equal(material.Default()))
+		})
+
+		It("can be assigned a material", func() {
+			s := shape.NewSphere()
+			m := material.Material{
+				Ambient: 1,
+			}
+			s.SetMaterial(m)
+			Expect(s.Material().Ambient).To(BeNumerically("~", 1))
+		})
 	})
 
 })

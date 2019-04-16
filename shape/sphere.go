@@ -3,6 +3,7 @@ package shape
 import (
 	"math"
 
+	"github.com/kieron-pivotal/rays/material"
 	"github.com/kieron-pivotal/rays/matrix"
 	"github.com/kieron-pivotal/rays/ray"
 	"github.com/kieron-pivotal/rays/tuple"
@@ -11,12 +12,14 @@ import (
 type Sphere struct {
 	id        int64
 	transform matrix.Matrix
+	material  material.Material
 }
 
 func NewSphere() *Sphere {
 	s := Sphere{
 		id:        GetNextCounter(),
 		transform: matrix.Identity(4, 4),
+		material:  material.Default(),
 	}
 	return &s
 }
@@ -52,4 +55,12 @@ func (s *Sphere) NormalAt(p tuple.Tuple) tuple.Tuple {
 	worldNormal := s.transform.Inverse().Transpose().TupleMultiply(objNormal)
 	worldNormal.W = 0
 	return worldNormal.Normalize()
+}
+
+func (s *Sphere) Material() material.Material {
+	return s.material
+}
+
+func (s *Sphere) SetMaterial(m material.Material) {
+	s.material = m
 }

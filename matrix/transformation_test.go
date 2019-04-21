@@ -135,3 +135,44 @@ var _ = Describe("combination", func() {
 		Expect(t).To(matrix.Equal(expectedT))
 	})
 })
+
+var _ = Describe("view transformation", func() {
+	It("is a non-transformation when from origin to -1 Z, with Y up", func() {
+		from := tuple.Point(0, 0, 0)
+		to := tuple.Point(0, 0, -1)
+		up := tuple.Vector(0, 1, 0)
+		viewTrans := matrix.ViewTransformation(from, to, up)
+		Expect(viewTrans).To(matrix.Equal(matrix.Identity(4, 4)))
+	})
+
+	It("reverses things when looking the other way", func() {
+		from := tuple.Point(0, 0, 0)
+		to := tuple.Point(0, 0, 1)
+		up := tuple.Vector(0, 1, 0)
+		viewTrans := matrix.ViewTransformation(from, to, up)
+		Expect(viewTrans).To(matrix.Equal(matrix.Scaling(-1, 1, -1)))
+	})
+
+	It("moves the world", func() {
+		from := tuple.Point(0, 0, 8)
+		to := tuple.Point(0, 0, 0)
+		up := tuple.Vector(0, 1, 0)
+		viewTrans := matrix.ViewTransformation(from, to, up)
+		Expect(viewTrans).To(matrix.Equal(matrix.Translation(0, 0, -8)))
+	})
+
+	It("can calculate an arbitrary transformation", func() {
+		from := tuple.Point(1, 3, 2)
+		to := tuple.Point(4, -2, 8)
+		up := tuple.Vector(1, 1, 0)
+		viewTrans := matrix.ViewTransformation(from, to, up)
+		m := matrix.New(4, 4,
+			-0.50709, 0.50709, 0.67612, -2.36643,
+			0.76772, 0.60609, 0.12122, -2.82843,
+			-0.35857, 0.59761, -0.71714, 0.0,
+			0.0, 0.0, 0.0, 1.0,
+		)
+		Expect(viewTrans).To(matrix.Equal(m))
+	})
+
+})

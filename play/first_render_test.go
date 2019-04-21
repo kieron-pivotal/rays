@@ -47,7 +47,7 @@ var _ = Describe("FirstRender", func() {
 		file.Close()
 	})
 
-	FIt("can draw a lighted circle from a sphere", func() {
+	It("can draw a lighted circle from a sphere", func() {
 		origin := tuple.Point(-5, 0, 0)
 		wallX := float64(10)
 		wallSize := float64(7)
@@ -74,7 +74,7 @@ var _ = Describe("FirstRender", func() {
 					hitPoint := ray.Position(hit.T)
 					normal := s.NormalAt(hitPoint)
 					eye := ray.Direction.Multiply(-1)
-					col := hit.Shape.Material().Lighting(l, hitPoint, eye, normal)
+					col := hit.Object.Material().Lighting(l, hitPoint, eye, normal)
 					canv.SetPixel(r, c, col)
 				}
 			}

@@ -68,8 +68,8 @@ var _ = Describe("Sphere", func() {
 		Expect(xs.Count()).To(Equal(2))
 		Expect(xs.Get(0).T).To(Equal(-6.0))
 		Expect(xs.Get(1).T).To(Equal(-4.0))
-		Expect(xs.Get(0).Shape).To(Equal(s))
-		Expect(xs.Get(0).Shape).NotTo(Equal(t))
+		Expect(xs.Get(0).Object).To(Equal(s))
+		Expect(xs.Get(0).Object).NotTo(Equal(t))
 	})
 
 	Context("transformations", func() {

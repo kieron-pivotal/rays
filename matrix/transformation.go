@@ -1,6 +1,10 @@
 package matrix
 
-import "math"
+import (
+	"math"
+
+	"github.com/kieron-pivotal/rays/tuple"
+)
 
 func Translation(x, y, z float64) Matrix {
 	m := Identity(4, 4)
@@ -84,4 +88,19 @@ func Shearing(xy, xz, yx, yz, zx, zy float64) Matrix {
 func (m Matrix) Shear(xy, xz, yx, yz, zx, zy float64) Matrix {
 	t := Shearing(xy, xz, yx, yz, zx, zy)
 	return t.Multiply(m)
+}
+
+func ViewTransformation(from, to, up tuple.Tuple) Matrix {
+	forwardNormal := to.Subtract(from).Normalize()
+	upNormal := up.Normalize()
+	left := forwardNormal.Cross(upNormal)
+	trueUp := left.Cross(forwardNormal)
+
+	orientation := New(4, 4,
+		left.X, left.Y, left.Z, 0,
+		trueUp.X, trueUp.Y, trueUp.Z, 0,
+		-forwardNormal.X, -forwardNormal.Y, -forwardNormal.Z, 0,
+		0, 0, 0, 1,
+	)
+	return orientation.Multiply(Translation(-from.X, -from.Y, -from.Z))
 }

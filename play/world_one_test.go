@@ -9,6 +9,7 @@ import (
 	"github.com/kieron-pivotal/rays/camera"
 	"github.com/kieron-pivotal/rays/color"
 	"github.com/kieron-pivotal/rays/light"
+	"github.com/kieron-pivotal/rays/material"
 	"github.com/kieron-pivotal/rays/matrix"
 	"github.com/kieron-pivotal/rays/shape"
 	"github.com/kieron-pivotal/rays/tuple"
@@ -17,16 +18,16 @@ import (
 )
 
 var _ = Describe("WorldOne", func() {
-	It("can draw the scene", func() {
+	FIt("can draw the scene", func() {
 
 		w := world.New()
 
 		floor := shape.NewSphere()
 		floor.SetTransform(matrix.Scaling(10, 0.01, 10))
-		floorMaterial := floor.Material()
-		floorMaterial.Color = color.New(1, 0.9, 0.9)
-		floorMaterial.Specular = 0
-		floor.SetMaterial(floorMaterial)
+		wallMaterial := material.New()
+		wallMaterial.Color = color.New(1, 0.9, 0.9)
+		wallMaterial.Specular = 0
+		floor.SetMaterial(wallMaterial)
 		w.AddObject(floor)
 
 		leftWall := shape.NewSphere()
@@ -34,7 +35,7 @@ var _ = Describe("WorldOne", func() {
 			RotateX(math.Pi/2).
 			RotateY(-math.Pi/4).
 			Translate(0, 0, 5))
-		leftWall.SetMaterial(floorMaterial)
+		leftWall.SetMaterial(wallMaterial)
 		w.AddObject(leftWall)
 
 		rightWall := shape.NewSphere()
@@ -42,12 +43,12 @@ var _ = Describe("WorldOne", func() {
 			RotateX(math.Pi/2).
 			RotateY(math.Pi/4).
 			Translate(0, 0, 5))
-		rightWall.SetMaterial(floorMaterial)
+		rightWall.SetMaterial(wallMaterial)
 		w.AddObject(rightWall)
 
 		middle := shape.NewSphere()
 		middle.SetTransform(matrix.Translation(-0.5, 1, 0.5))
-		middleMaterial := middle.Material()
+		middleMaterial := material.New()
 		middleMaterial.Color = color.New(0.1, 1, 0.5)
 		middleMaterial.Diffuse = 0.7
 		middleMaterial.Specular = 0.3
@@ -56,7 +57,7 @@ var _ = Describe("WorldOne", func() {
 
 		left := shape.NewSphere()
 		left.SetTransform(matrix.Identity(4, 4).Scale(0.33, 0.33, 0.33).Translate(-1.5, 0.33, -0.75))
-		leftMaterial := left.Material()
+		leftMaterial := material.New()
 		leftMaterial.Color = color.New(1, 0.8, 0.1)
 		leftMaterial.Diffuse = 0.7
 		leftMaterial.Specular = 0.3
@@ -65,7 +66,7 @@ var _ = Describe("WorldOne", func() {
 
 		right := shape.NewSphere()
 		right.SetTransform(matrix.Identity(4, 4).Scale(0.5, 0.5, 0.5).Translate(1.5, 0.5, -0.5))
-		rightMaterial := right.Material()
+		rightMaterial := material.New()
 		rightMaterial.Color = color.New(0.5, 1, 0.1)
 		rightMaterial.Diffuse = 0.7
 		rightMaterial.Specular = 0.3

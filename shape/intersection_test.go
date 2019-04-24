@@ -1,6 +1,7 @@
 package shape_test
 
 import (
+	"github.com/kieron-pivotal/rays/matrix"
 	"github.com/kieron-pivotal/rays/ray"
 	"github.com/kieron-pivotal/rays/shape"
 	"github.com/kieron-pivotal/rays/tuple"
@@ -90,5 +91,15 @@ var _ = Describe("Intersection", func() {
 			Expect(comps.Inside).To(BeTrue())
 			Expect(comps.NormalV).To(tuple.Equal(tuple.Vector(0, 0, -1)))
 		})
+	})
+
+	It("can calculate the over point", func() {
+		r := ray.New(tuple.Point(0, 0, -5), tuple.Vector(0, 0, 1))
+		s := shape.NewSphere()
+		s.SetTransform(matrix.Translation(0, 0, 1))
+		i := shape.Intersection{T: 5, Object: s}
+		comps := i.PrepareComputations(r)
+		Expect(comps.OverPoint.Z).To(BeNumerically("<", -tuple.EPSILON/2))
+		Expect(comps.Point.Z).To(BeNumerically(">", comps.OverPoint.Z))
 	})
 })

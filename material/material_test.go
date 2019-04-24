@@ -37,42 +37,55 @@ var _ = Describe("Material", func() {
 		})
 
 		DescribeTable("lighting",
-			func(eye, normal tuple.Tuple, l light.Point, expected color.Color) {
-				Expect(m.Lighting(l, p, eye, normal)).To(color.Equal(expected))
+			func(eye, normal tuple.Tuple, l light.Point, inShadow bool, expected color.Color) {
+				Expect(m.Lighting(l, p, eye, normal, inShadow)).To(color.Equal(expected))
 			},
 
 			Entry("eye in front of light",
 				tuple.Vector(0, 0, -1),
 				tuple.Vector(0, 0, -1),
-				light.NewPoint(tuple.Vector(0, 0, -10), color.New(1, 1, 1)),
+				light.NewPoint(tuple.Point(0, 0, -10), color.New(1, 1, 1)),
+				false,
 				color.New(1.9, 1.9, 1.9),
 			),
 
 			Entry("eye offset 45 degs",
 				tuple.Vector(0, r2/2, -r2/2),
 				tuple.Vector(0, 0, -1),
-				light.NewPoint(tuple.Vector(0, 0, -10), color.New(1, 1, 1)),
+				light.NewPoint(tuple.Point(0, 0, -10), color.New(1, 1, 1)),
+				false,
 				color.New(1.0, 1.0, 1.0),
 			),
 
 			Entry("light offset 45 degs",
 				tuple.Vector(0, 0, -1),
 				tuple.Vector(0, 0, -1),
-				light.NewPoint(tuple.Vector(0, 10, -10), color.New(1, 1, 1)),
+				light.NewPoint(tuple.Point(0, 10, -10), color.New(1, 1, 1)),
+				false,
 				color.New(0.7364, 0.7364, 0.7364),
 			),
 
 			Entry("light and eye offset opposite 45 degs",
 				tuple.Vector(0, -r2/2, -r2/2),
 				tuple.Vector(0, 0, -1),
-				light.NewPoint(tuple.Vector(0, 10, -10), color.New(1, 1, 1)),
+				light.NewPoint(tuple.Point(0, 10, -10), color.New(1, 1, 1)),
+				false,
 				color.New(1.6364, 1.6364, 1.6364),
 			),
 
 			Entry("light behind the surface",
 				tuple.Vector(0, 0, -1),
 				tuple.Vector(0, 0, -1),
-				light.NewPoint(tuple.Vector(0, 0, 10), color.New(1, 1, 1)),
+				light.NewPoint(tuple.Point(0, 0, 10), color.New(1, 1, 1)),
+				false,
+				color.New(0.1, 0.1, 0.1),
+			),
+
+			Entry("in shadow",
+				tuple.Vector(0, 0, -1),
+				tuple.Vector(0, 0, -1),
+				light.NewPoint(tuple.Point(0, 0, -10), color.New(1, 1, 1)),
+				true,
 				color.New(0.1, 0.1, 0.1),
 			),
 		)

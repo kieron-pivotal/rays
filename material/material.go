@@ -26,7 +26,7 @@ func New() Material {
 	}
 }
 
-func (m Material) Lighting(l light.Point, pos, eye, normal tuple.Tuple) color.Color {
+func (m Material) Lighting(l light.Point, pos, eye, normal tuple.Tuple, inShadow bool) color.Color {
 
 	black := color.New(0, 0, 0)
 	var ambient, diffuse, specular color.Color
@@ -36,7 +36,7 @@ func (m Material) Lighting(l light.Point, pos, eye, normal tuple.Tuple) color.Co
 
 	lightV := l.Position.Subtract(pos).Normalize()
 	lightDotNormal := lightV.Dot(normal)
-	if lightDotNormal < 0 {
+	if inShadow || lightDotNormal < 0 {
 		diffuse = black
 		specular = black
 	} else {

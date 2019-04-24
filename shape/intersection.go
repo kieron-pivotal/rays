@@ -45,12 +45,13 @@ func (i *Intersections) Hit() *Intersection {
 }
 
 type Computations struct {
-	T       float64
-	Object  Object
-	Point   tuple.Tuple
-	EyeV    tuple.Tuple
-	NormalV tuple.Tuple
-	Inside  bool
+	T         float64
+	Object    Object
+	Point     tuple.Tuple
+	OverPoint tuple.Tuple
+	EyeV      tuple.Tuple
+	NormalV   tuple.Tuple
+	Inside    bool
 }
 
 func (i *Intersection) PrepareComputations(r ray.Ray) Computations {
@@ -64,5 +65,6 @@ func (i *Intersection) PrepareComputations(r ray.Ray) Computations {
 	if c.Inside {
 		c.NormalV = c.NormalV.Multiply(-1)
 	}
+	c.OverPoint = c.Point.Add(c.NormalV.Multiply(tuple.EPSILON))
 	return c
 }

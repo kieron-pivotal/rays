@@ -9,6 +9,7 @@ import (
 	"github.com/kieron-pivotal/rays/tuple"
 	"github.com/kieron-pivotal/rays/world"
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 )
 
@@ -101,6 +102,33 @@ var _ = Describe("World", func() {
 			c := w.ColorAt(r)
 			Expect(c).To(color.Equal(inner.Material().Color))
 		})
+
+		It("gets a shadow color correct", func() {
+			w := world.New()
+			lightSource := light.NewPoint(tuple.Point(0, 0, -10), color.New(1, 1, 1))
+			w.LightSource = &lightSource
+			s1 := shape.NewSphere()
+			w.AddObject(s1)
+			s2 := shape.NewSphere()
+			s2.SetTransform(matrix.Translation(0, 0, 10))
+			w.AddObject(s2)
+			r := ray.New(tuple.Point(0, 0, 5), tuple.Vector(0, 0, 1))
+			i := shape.Intersection{T: 4, Object: s2}
+			comps := i.PrepareComputations(r)
+			c := w.ShadeHit(comps)
+			Expect(c).To(color.Equal(color.New(0.1, 0.1, 0.1)))
+		})
 	})
+
+	DescribeTable("in shadow?", func(point tuple.Tuple, inShadow bool) {
+		w := world.Default()
+		Expect(w.InShadow(point)).To(Equal(inShadow))
+	},
+
+		Entry("nothing colinear with sphere and light", tuple.Point(0, 10, 0), false),
+		Entry("sphere between light and point", tuple.Point(10, -10, 10), true),
+		Entry("sphere behind the light", tuple.Point(-20, 20, -20), false),
+		Entry("object behind the point", tuple.Point(-2, 2, -2), false),
+	)
 
 })

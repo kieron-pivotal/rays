@@ -12,7 +12,7 @@ import (
 var _ = Describe("Intersection", func() {
 
 	var (
-		s  *shape.Sphere
+		s  *shape.Object
 		ix *shape.Intersections
 	)
 

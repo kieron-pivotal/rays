@@ -13,7 +13,7 @@ type Intersections struct {
 
 type Intersection struct {
 	T      float64
-	Object Object
+	Object *Object
 }
 
 func NewIntersections() *Intersections {
@@ -28,7 +28,7 @@ func (i Intersections) Get(idx int) *Intersection {
 	return i.list[idx]
 }
 
-func (i *Intersections) Add(t float64, s Object) {
+func (i *Intersections) Add(t float64, s *Object) {
 	i.list = append(i.list, &Intersection{T: t, Object: s})
 	sort.Slice(i.list, func(a, b int) bool {
 		return i.list[a].T < i.list[b].T
@@ -46,7 +46,7 @@ func (i *Intersections) Hit() *Intersection {
 
 type Computations struct {
 	T         float64
-	Object    Object
+	Object    *Object
 	Point     tuple.Tuple
 	OverPoint tuple.Tuple
 	EyeV      tuple.Tuple

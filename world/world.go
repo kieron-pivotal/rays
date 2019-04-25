@@ -11,7 +11,7 @@ import (
 )
 
 type World struct {
-	Objects     []shape.Object
+	Objects     []*shape.Object
 	LightSource *light.Point
 }
 
@@ -37,7 +37,7 @@ func Default() *World {
 	return w
 }
 
-func (w *World) AddObject(obj shape.Object) {
+func (w *World) AddObject(obj *shape.Object) {
 	w.Objects = append(w.Objects, obj)
 }
 

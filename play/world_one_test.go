@@ -76,7 +76,7 @@ var _ = Describe("WorldOne", func() {
 		lightSource := light.NewPoint(tuple.Point(-10, 10, -10), color.New(1, 1, 1))
 		w.LightSource = &lightSource
 
-		camera := camera.New(600, 300, math.Pi/3)
+		camera := camera.New(300, 180, math.Pi/3)
 		camera.Transform = matrix.ViewTransformation(
 			tuple.Point(0, 1.5, -5),
 			tuple.Point(0, 1, 0),

@@ -16,6 +16,16 @@ type Intersection struct {
 	Object *Object
 }
 
+type Computations struct {
+	T         float64
+	Object    *Object
+	Point     tuple.Tuple
+	OverPoint tuple.Tuple
+	EyeV      tuple.Tuple
+	NormalV   tuple.Tuple
+	Inside    bool
+}
+
 func NewIntersections() *Intersections {
 	return &Intersections{}
 }
@@ -42,16 +52,6 @@ func (i *Intersections) Hit() *Intersection {
 		}
 	}
 	return nil
-}
-
-type Computations struct {
-	T         float64
-	Object    *Object
-	Point     tuple.Tuple
-	OverPoint tuple.Tuple
-	EyeV      tuple.Tuple
-	NormalV   tuple.Tuple
-	Inside    bool
 }
 
 func (i *Intersection) PrepareComputations(r ray.Ray) Computations {

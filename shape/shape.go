@@ -24,10 +24,10 @@ type LocalObject interface {
 }
 
 type Object struct {
-	id        int64
-	transform matrix.Matrix
-	material  material.Material
-	LocalObject
+	id          int64
+	transform   matrix.Matrix
+	material    material.Material
+	localObject LocalObject
 }
 
 func New(obj LocalObject) *Object {
@@ -35,7 +35,7 @@ func New(obj LocalObject) *Object {
 		id:          GetNextCounter(),
 		transform:   matrix.Identity(4, 4),
 		material:    material.New(),
-		LocalObject: obj,
+		localObject: obj,
 	}
 	return &o
 }
@@ -43,7 +43,7 @@ func New(obj LocalObject) *Object {
 func (o *Object) Intersect(ray ray.Ray) *Intersections {
 	ray2 := ray.Transform(o.transform.Inverse())
 	res := NewIntersections()
-	for _, t := range o.LocalIntersect(ray2) {
+	for _, t := range o.localObject.LocalIntersect(ray2) {
 		res.Add(t, o)
 	}
 	return res
@@ -51,7 +51,7 @@ func (o *Object) Intersect(ray ray.Ray) *Intersections {
 
 func (o *Object) NormalAt(p tuple.Tuple) tuple.Tuple {
 	objPoint := o.transform.Inverse().TupleMultiply(p)
-	objNormal := o.LocalNormalAt(objPoint)
+	objNormal := o.localObject.LocalNormalAt(objPoint)
 	worldNormal := o.transform.Inverse().Transpose().TupleMultiply(objNormal)
 	worldNormal.W = 0
 	return worldNormal.Normalize()

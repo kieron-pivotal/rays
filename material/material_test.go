@@ -6,6 +6,8 @@ import (
 	"github.com/kieron-pivotal/rays/color"
 	"github.com/kieron-pivotal/rays/light"
 	"github.com/kieron-pivotal/rays/material"
+	"github.com/kieron-pivotal/rays/matrix"
+	"github.com/kieron-pivotal/rays/pattern"
 	"github.com/kieron-pivotal/rays/tuple"
 
 	. "github.com/onsi/ginkgo"
@@ -38,7 +40,8 @@ var _ = Describe("Material", func() {
 
 		DescribeTable("lighting",
 			func(eye, normal tuple.Tuple, l light.Point, inShadow bool, expected color.Color) {
-				Expect(m.Lighting(l, p, eye, normal, inShadow)).To(color.Equal(expected))
+				id := matrix.Identity(4, 4)
+				Expect(m.Lighting(l, id, p, eye, normal, inShadow)).To(color.Equal(expected))
 			},
 
 			Entry("eye in front of light",
@@ -90,6 +93,28 @@ var _ = Describe("Material", func() {
 			),
 		)
 
+	})
+
+	Context("with a pattern", func() {
+		It("gets the color right", func() {
+			m := material.New()
+			p := pattern.NewStripe(color.New(1, 1, 1), color.New(0, 0, 0))
+
+			m.SetPattern(&p)
+			m.Ambient = 1
+			m.Diffuse = 0
+			m.Specular = 0
+
+			eyev := tuple.Vector(0, 0, -1)
+			normalv := tuple.Vector(0, 0, -1)
+			l := light.NewPoint(tuple.Point(0, 0, -10), color.New(1, 1, 1))
+			id := matrix.Identity(4, 4)
+
+			c1 := m.Lighting(l, id, tuple.Point(0.9, 0, 0), eyev, normalv, false)
+			Expect(c1).To(color.Equal(color.New(1, 1, 1)))
+			c2 := m.Lighting(l, id, tuple.Point(1.1, 0, 0), eyev, normalv, false)
+			Expect(c2).To(color.Equal(color.New(0, 0, 0)))
+		})
 	})
 
 })

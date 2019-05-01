@@ -11,6 +11,7 @@ import (
 	"github.com/kieron-pivotal/rays/light"
 	"github.com/kieron-pivotal/rays/material"
 	"github.com/kieron-pivotal/rays/matrix"
+	"github.com/kieron-pivotal/rays/pattern"
 	"github.com/kieron-pivotal/rays/shape"
 	"github.com/kieron-pivotal/rays/tuple"
 	"github.com/kieron-pivotal/rays/world"
@@ -18,15 +19,19 @@ import (
 )
 
 var _ = Describe("WorldOne", func() {
-	It("can draw the scene", func() {
+	FIt("can draw the scene", func() {
 
 		w := world.New()
+
+		p := pattern.NewStripe(color.New(0.8, 0.8, 0.8), color.New(0.1, 0.1, 0.1))
+		p.SetTransform(matrix.Scaling(0.25, 0.25, 0.25))
 
 		floor := shape.NewSphere()
 		floor.SetTransform(matrix.Scaling(10, 0.01, 10))
 		wallMaterial := material.New()
 		wallMaterial.Color = color.New(1, 0.9, 0.9)
 		wallMaterial.Specular = 0
+		wallMaterial.SetPattern(&p)
 		floor.SetMaterial(wallMaterial)
 		w.AddObject(floor)
 
@@ -42,6 +47,7 @@ var _ = Describe("WorldOne", func() {
 		rightWall.SetTransform(matrix.Identity(4, 4).Scale(10, 0.01, 10).
 			RotateX(math.Pi/2).
 			RotateY(math.Pi/4).
+			RotateZ(math.Pi/8).
 			Translate(0, 0, 5))
 		rightWall.SetMaterial(wallMaterial)
 		w.AddObject(rightWall)
@@ -52,6 +58,7 @@ var _ = Describe("WorldOne", func() {
 		middleMaterial.Color = color.New(0.1, 1, 0.5)
 		middleMaterial.Diffuse = 0.7
 		middleMaterial.Specular = 0.3
+		middleMaterial.SetPattern(&p)
 		middle.SetMaterial(middleMaterial)
 		w.AddObject(middle)
 
@@ -61,15 +68,17 @@ var _ = Describe("WorldOne", func() {
 		leftMaterial.Color = color.New(1, 0.8, 0.1)
 		leftMaterial.Diffuse = 0.7
 		leftMaterial.Specular = 0.3
+		leftMaterial.SetPattern(&p)
 		left.SetMaterial(leftMaterial)
 		w.AddObject(left)
 
 		right := shape.NewSphere()
-		right.SetTransform(matrix.Identity(4, 4).Scale(0.5, 0.5, 0.5).Translate(1.5, 0.5, -0.5))
+		right.SetTransform(matrix.Identity(4, 4).RotateZ(math.Pi/2).Scale(0.5, 0.5, 0.5).Translate(1.5, 0.5, -0.5))
 		rightMaterial := material.New()
 		rightMaterial.Color = color.New(0.5, 1, 0.1)
 		rightMaterial.Diffuse = 0.7
 		rightMaterial.Specular = 0.3
+		rightMaterial.SetPattern(&p)
 		right.SetMaterial(rightMaterial)
 		w.AddObject(right)
 
@@ -95,7 +104,7 @@ var _ = Describe("WorldOne", func() {
 		fmt.Fprint(out, img)
 	})
 
-	FIt("can draw the scene with a plane", func() {
+	It("can draw the scene with a plane", func() {
 
 		w := world.New()
 

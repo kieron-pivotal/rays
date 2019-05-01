@@ -5,6 +5,8 @@ import (
 
 	"github.com/kieron-pivotal/rays/color"
 	"github.com/kieron-pivotal/rays/light"
+	"github.com/kieron-pivotal/rays/matrix"
+	"github.com/kieron-pivotal/rays/pattern"
 	"github.com/kieron-pivotal/rays/tuple"
 )
 
@@ -14,6 +16,7 @@ type Material struct {
 	Diffuse   float64
 	Specular  float64
 	Shininess float64
+	pattern   *pattern.Stripe
 }
 
 func New() Material {
@@ -26,12 +29,16 @@ func New() Material {
 	}
 }
 
-func (m Material) Lighting(l light.Point, pos, eye, normal tuple.Tuple, inShadow bool) color.Color {
+func (m Material) Lighting(l light.Point, objTransform matrix.Matrix, pos, eye, normal tuple.Tuple, inShadow bool) color.Color {
 
 	black := color.New(0, 0, 0)
 	var ambient, diffuse, specular color.Color
 
-	effectiveColor := m.Color.ColorMultiply(l.Intensity)
+	c := m.Color
+	if m.pattern != nil {
+		c = m.pattern.StripeAtObject(objTransform, pos)
+	}
+	effectiveColor := c.ColorMultiply(l.Intensity)
 	ambient = effectiveColor.Multiply(m.Ambient)
 
 	lightV := l.Position.Subtract(pos).Normalize()
@@ -54,4 +61,8 @@ func (m Material) Lighting(l light.Point, pos, eye, normal tuple.Tuple, inShadow
 	}
 
 	return ambient.Add(diffuse).Add(specular)
+}
+
+func (m *Material) SetPattern(p *pattern.Stripe) {
+	m.pattern = p
 }

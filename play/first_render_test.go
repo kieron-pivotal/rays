@@ -74,7 +74,7 @@ var _ = Describe("FirstRender", func() {
 					hitPoint := ray.Position(hit.T)
 					normal := s.NormalAt(hitPoint)
 					eye := ray.Direction.Multiply(-1)
-					col := hit.Object.Material().Lighting(l, hitPoint, eye, normal, false)
+					col := hit.Object.Material().Lighting(l, hit.Object.GetTransform(), hitPoint, eye, normal, false)
 					canv.SetPixel(r, c, col)
 				}
 			}

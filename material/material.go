@@ -16,7 +16,7 @@ type Material struct {
 	Diffuse   float64
 	Specular  float64
 	Shininess float64
-	pattern   *pattern.Stripe
+	pattern   *pattern.Pattern
 }
 
 func New() Material {
@@ -36,7 +36,7 @@ func (m Material) Lighting(l light.Point, objTransform matrix.Matrix, pos, eye, 
 
 	c := m.Color
 	if m.pattern != nil {
-		c = m.pattern.StripeAtObject(objTransform, pos)
+		c = m.pattern.PatternAtShape(objTransform, pos)
 	}
 	effectiveColor := c.ColorMultiply(l.Intensity)
 	ambient = effectiveColor.Multiply(m.Ambient)
@@ -63,6 +63,6 @@ func (m Material) Lighting(l light.Point, objTransform matrix.Matrix, pos, eye, 
 	return ambient.Add(diffuse).Add(specular)
 }
 
-func (m *Material) SetPattern(p *pattern.Stripe) {
+func (m *Material) SetPattern(p *pattern.Pattern) {
 	m.pattern = p
 }

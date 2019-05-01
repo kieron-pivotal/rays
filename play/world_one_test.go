@@ -25,6 +25,7 @@ var _ = Describe("WorldOne", func() {
 
 		p := pattern.NewStripe(color.New(0.8, 0.8, 0.8), color.New(0.1, 0.1, 0.1))
 		p.SetTransform(matrix.Scaling(0.25, 0.25, 0.25))
+		p2 := pattern.NewGradient(color.New(0.8, 0.2, 0.1), color.New(0.1, 0.1, 0.1))
 
 		floor := shape.NewSphere()
 		floor.SetTransform(matrix.Scaling(10, 0.01, 10))
@@ -58,7 +59,7 @@ var _ = Describe("WorldOne", func() {
 		middleMaterial.Color = color.New(0.1, 1, 0.5)
 		middleMaterial.Diffuse = 0.7
 		middleMaterial.Specular = 0.3
-		middleMaterial.SetPattern(&p)
+		middleMaterial.SetPattern(&p2)
 		middle.SetMaterial(middleMaterial)
 		w.AddObject(middle)
 

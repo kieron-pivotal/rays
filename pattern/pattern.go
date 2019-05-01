@@ -1,40 +1,39 @@
 package pattern
 
 import (
-	"math"
-
 	"github.com/kieron-pivotal/rays/color"
 	"github.com/kieron-pivotal/rays/matrix"
 	"github.com/kieron-pivotal/rays/tuple"
 )
 
-type Stripe struct {
-	A         color.Color
-	B         color.Color
-	transform matrix.Matrix
+type Pattern struct {
+	actualPattern ActualPattern
+	transform     matrix.Matrix
 }
 
-func NewStripe(a, b color.Color) Stripe {
-	return Stripe{
-		A:         a,
-		B:         b,
-		transform: matrix.Identity(4, 4),
+//go:generate counterfeiter -o fakes/fake_actual_pattern.go . ActualPattern
+
+type ActualPattern interface {
+	PatternAt(p tuple.Tuple) color.Color
+}
+
+func New(actualPattern ActualPattern) Pattern {
+	return Pattern{
+		actualPattern: actualPattern,
+		transform:     matrix.Identity(4, 4),
 	}
 }
 
-func (s Stripe) StripeAt(p tuple.Tuple) color.Color {
-	if int(math.Floor(p.X))%2 == 0 {
-		return s.A
-	}
-	return s.B
+func (p Pattern) GetTransform() matrix.Matrix {
+	return p.transform
 }
 
-func (s Stripe) StripeAtObject(t matrix.Matrix, p tuple.Tuple) color.Color {
-	op := t.Inverse().TupleMultiply(p)
-	pp := s.transform.Inverse().TupleMultiply(op)
-	return s.StripeAt(pp)
+func (p *Pattern) SetTransform(t matrix.Matrix) {
+	p.transform = t
 }
 
-func (s *Stripe) SetTransform(t matrix.Matrix) {
-	s.transform = t
+func (p Pattern) PatternAtShape(objTransform matrix.Matrix, wp tuple.Tuple) color.Color {
+	op := objTransform.Inverse().TupleMultiply(wp)
+	pp := p.transform.Inverse().TupleMultiply(op)
+	return p.actualPattern.PatternAt(pp)
 }

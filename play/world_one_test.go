@@ -19,7 +19,7 @@ import (
 )
 
 var _ = Describe("WorldOne", func() {
-	FIt("can draw the scene", func() {
+	It("can draw the scene", func() {
 
 		w := world.New()
 

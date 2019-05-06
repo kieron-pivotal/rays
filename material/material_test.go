@@ -117,4 +117,11 @@ var _ = Describe("Material", func() {
 		})
 	})
 
+	Context("with reflection", func() {
+		It("has a reflective attribute", func() {
+			m := material.New()
+			Expect(m.Reflective).To(BeNumerically("~", 0))
+		})
+	})
+
 })

@@ -1,6 +1,8 @@
 package shape_test
 
 import (
+	"math"
+
 	"github.com/kieron-pivotal/rays/matrix"
 	"github.com/kieron-pivotal/rays/ray"
 	"github.com/kieron-pivotal/rays/shape"
@@ -101,5 +103,14 @@ var _ = Describe("Intersection", func() {
 		comps := i.PrepareComputations(r)
 		Expect(comps.OverPoint.Z).To(BeNumerically("<", -tuple.EPSILON/2))
 		Expect(comps.Point.Z).To(BeNumerically(">", comps.OverPoint.Z))
+	})
+
+	It("can calculate the reflective vector", func() {
+		r2 := math.Sqrt(2)
+		r := ray.New(tuple.Point(0, 1, -1), tuple.Vector(0, -r2/2, r2/2))
+		s := shape.NewPlane()
+		i := shape.Intersection{T: r2, Object: s}
+		comps := i.PrepareComputations(r)
+		Expect(comps.ReflectV).To(tuple.Equal(tuple.Vector(0, r2/2, r2/2)))
 	})
 })

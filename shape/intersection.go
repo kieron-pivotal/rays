@@ -23,6 +23,7 @@ type Computations struct {
 	OverPoint tuple.Tuple
 	EyeV      tuple.Tuple
 	NormalV   tuple.Tuple
+	ReflectV  tuple.Tuple
 	Inside    bool
 }
 
@@ -66,5 +67,6 @@ func (i *Intersection) PrepareComputations(r ray.Ray) Computations {
 		c.NormalV = c.NormalV.Multiply(-1)
 	}
 	c.OverPoint = c.Point.Add(c.NormalV.Multiply(tuple.EPSILON))
+	c.ReflectV = r.Direction.Reflect(c.NormalV)
 	return c
 }

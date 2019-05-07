@@ -11,7 +11,6 @@ import (
 	"github.com/kieron-pivotal/rays/light"
 	"github.com/kieron-pivotal/rays/material"
 	"github.com/kieron-pivotal/rays/matrix"
-	"github.com/kieron-pivotal/rays/pattern"
 	"github.com/kieron-pivotal/rays/shape"
 	"github.com/kieron-pivotal/rays/tuple"
 	"github.com/kieron-pivotal/rays/world"
@@ -19,38 +18,37 @@ import (
 	// . "github.com/onsi/gomega"
 )
 
-var _ = Describe("CheckerSphere", func() {
+var _ = Describe("Reflect", func() {
 
-	It("draws a checkered sphere", func() {
+	FIt("does something", func() {
 		w := world.New()
-
-		s := shape.NewSphere()
-		s.SetTransform(matrix.Scaling(5, 5, 5))
-
-		p := pattern.NewChecker(color.New(1, 1, 1), color.New(0, 0, 0))
-		p.SetTransform(matrix.Scaling(0.3, 0.3, 0.3).RotateX(-math.Pi / 8))
-
-		m := material.New()
-		m.Ambient = 0.2
-		m.SetPattern(&p)
-
-		s.SetMaterial(m)
-
-		w.AddObject(s)
-
-		l := light.NewPoint(tuple.Point(10, 10, 10), color.New(1, 1, 1))
+		l := light.NewPoint(tuple.Point(0, 10, 10), color.New(1, 1, 1))
 		w.LightSource = &l
 
-		camera := camera.New(300, 200, math.Pi/4)
+		plane := shape.NewPlane()
+		mp := material.New()
+		mp.Reflective = 1
+		mp.Color = color.New(1, 0, 0)
+		plane.SetMaterial(mp)
+		w.AddObject(plane)
+
+		sphere := shape.NewSphere()
+		sphere.SetTransform(matrix.Scaling(2, 2, 2).Translate(0, 2, 0))
+		ms := material.New()
+		ms.Color = color.New(0, 1, 0)
+		sphere.SetMaterial(ms)
+		w.AddObject(sphere)
+
+		camera := camera.New(500, 300, math.Pi/3)
 		camera.Transform = matrix.ViewTransformation(
-			tuple.Point(0, 20, 0),
+			tuple.Point(-15, 2, 5),
 			tuple.Point(0, 0, 0),
-			tuple.Vector(1, 0, 0),
+			tuple.Vector(0, 1, 0),
 		)
 
 		canvas := camera.Render(w)
 
-		out, err := os.Create("checker_sphere.ppm")
+		out, err := os.Create("reflect.ppm")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -58,6 +56,7 @@ var _ = Describe("CheckerSphere", func() {
 
 		img := canvas.ToPPM()
 		fmt.Fprint(out, img)
+
 	})
 
 })

@@ -1,6 +1,8 @@
 package world_test
 
 import (
+	"math"
+
 	"github.com/kieron-pivotal/rays/color"
 	"github.com/kieron-pivotal/rays/light"
 	"github.com/kieron-pivotal/rays/matrix"
@@ -130,5 +132,94 @@ var _ = Describe("World", func() {
 		Entry("sphere behind the light", tuple.Point(-20, 20, -20), false),
 		Entry("object behind the point", tuple.Point(-2, 2, -2), false),
 	)
+
+	Context("reflection", func() {
+		It("returns black when a ray reflects from a non-reflective surface", func() {
+			w := world.Default()
+			r := ray.New(tuple.Point(0, 0, 0), tuple.Vector(0, 0, 1))
+			s := w.Objects[1]
+			m := s.Material()
+			m.Ambient = 1
+			s.SetMaterial(m)
+			i := shape.Intersection{T: 1, Object: s}
+			comps := i.PrepareComputations(r)
+			c := w.ReflectedColor(comps, 1)
+			Expect(c).To(color.Equal(color.New(0, 0, 0)))
+		})
+
+		It("returns a reflected color from a reflective surface", func() {
+			r2 := math.Sqrt(2)
+
+			w := world.Default()
+			s := shape.NewPlane()
+			s.SetTransform(matrix.Translation(0, -1, 0))
+			m := s.Material()
+			m.Reflective = 0.5
+			s.SetMaterial(m)
+			w.AddObject(s)
+			r := ray.New(tuple.Point(0, 0, -3), tuple.Vector(0, -r2/2, r2/2))
+			i := shape.Intersection{T: r2, Object: s}
+			comps := i.PrepareComputations(r)
+			c := w.ReflectedColor(comps, 1)
+			Expect(c).To(color.Equal(color.New(0.19033, 0.23791, 0.14274)))
+		})
+
+		It("returns a shadeHit incorporating color from a reflective surface", func() {
+			r2 := math.Sqrt(2)
+
+			w := world.Default()
+			s := shape.NewPlane()
+			s.SetTransform(matrix.Translation(0, -1, 0))
+			m := s.Material()
+			m.Reflective = 0.5
+			s.SetMaterial(m)
+			w.AddObject(s)
+			r := ray.New(tuple.Point(0, 0, -3), tuple.Vector(0, -r2/2, r2/2))
+			i := shape.Intersection{T: r2, Object: s}
+			comps := i.PrepareComputations(r)
+			c := w.ShadeHit(comps)
+			Expect(c).To(color.Equal(color.New(0.87675, 0.92434, 0.82917)))
+		})
+
+		It("avoids infinite recursion", func() {
+			w := world.New()
+			l := light.NewPoint(tuple.Point(0, 0, 0), color.New(1, 1, 1))
+			w.LightSource = &l
+
+			lower := shape.NewPlane()
+			lower.SetTransform(matrix.Translation(0, -1, 0))
+			ml := lower.Material()
+			ml.Reflective = 1
+			lower.SetMaterial(ml)
+			w.AddObject(lower)
+
+			upper := shape.NewPlane()
+			upper.SetTransform(matrix.Translation(0, 1, 0))
+			mu := upper.Material()
+			mu.Reflective = 1
+			upper.SetMaterial(mu)
+			w.AddObject(upper)
+
+			r := ray.New(tuple.Point(0, 0, 0), tuple.Vector(0, 1, 0))
+			Expect(func() { w.ColorAt(r) }).ToNot(Panic())
+		})
+
+		It("respects the remaining parameter", func() {
+			r2 := math.Sqrt(2)
+
+			w := world.Default()
+			s := shape.NewPlane()
+			s.SetTransform(matrix.Translation(0, -1, 0))
+			m := s.Material()
+			m.Reflective = 0.5
+			s.SetMaterial(m)
+			w.AddObject(s)
+			r := ray.New(tuple.Point(0, 0, -3), tuple.Vector(0, -r2/2, r2/2))
+			i := shape.Intersection{T: r2, Object: s}
+			comps := i.PrepareComputations(r)
+			c := w.ReflectedColor(comps, 0)
+			Expect(c).To(color.Equal(color.New(0, 0, 0)))
+		})
+	})
 
 })

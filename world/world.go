@@ -10,6 +10,10 @@ import (
 	"github.com/kieron-pivotal/rays/tuple"
 )
 
+const (
+	REFLECT_MAX_RECURSION = 5
+)
+
 type World struct {
 	Objects     []*shape.Object
 	LightSource *light.Point
@@ -53,17 +57,27 @@ func (w *World) Intersections(r ray.Ray) *shape.Intersections {
 	return ix
 }
 
-func (w *World) ShadeHit(comps shape.Computations) color.Color {
+func (w *World) ShadeHit(comps shape.Computations, optRemaining ...int) color.Color {
+	remaining := REFLECT_MAX_RECURSION
+	if len(optRemaining) == 1 {
+		remaining = optRemaining[0]
+	}
 	inShadow := w.InShadow(comps.OverPoint)
-	return comps.Object.Material().Lighting(*w.LightSource, comps.Object.GetTransform(), comps.Point, comps.EyeV, comps.NormalV, inShadow)
+	surface := comps.Object.Material().Lighting(*w.LightSource, comps.Object.GetTransform(), comps.Point, comps.EyeV, comps.NormalV, inShadow)
+	reflected := w.ReflectedColor(comps, remaining)
+	return surface.Add(reflected)
 }
 
-func (w *World) ColorAt(r ray.Ray) color.Color {
+func (w *World) ColorAt(r ray.Ray, optRemaining ...int) color.Color {
+	remaining := REFLECT_MAX_RECURSION
+	if len(optRemaining) == 1 {
+		remaining = optRemaining[0]
+	}
 	ix := w.Intersections(r)
 	hit := ix.Hit()
 	if hit != nil {
 		comps := hit.PrepareComputations(r)
-		return w.ShadeHit(comps)
+		return w.ShadeHit(comps, remaining)
 	}
 	return color.Color{}
 }
@@ -75,4 +89,15 @@ func (w *World) InShadow(p tuple.Tuple) bool {
 	ix := w.Intersections(ray)
 	hit := ix.Hit()
 	return hit != nil && hit.T < distance
+}
+
+func (w *World) ReflectedColor(comps shape.Computations, remaining int) color.Color {
+	m := comps.Object.Material()
+	if m.Reflective < tuple.EPSILON || remaining == 0 {
+		return color.Color{}
+	}
+
+	reflectRay := ray.New(comps.OverPoint, comps.ReflectV)
+	color := w.ColorAt(reflectRay, remaining-1)
+	return color.Multiply(m.Reflective)
 }

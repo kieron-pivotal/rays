@@ -27,7 +27,7 @@ var _ = Describe("Reflect", func() {
 
 		plane := shape.NewPlane()
 		mp := material.New()
-		mp.Reflective = 1
+		mp.Reflective = 0.5
 		mp.Color = color.New(1, 0, 0)
 		plane.SetMaterial(mp)
 		w.AddObject(plane)
@@ -35,6 +35,7 @@ var _ = Describe("Reflect", func() {
 		sphere := shape.NewSphere()
 		sphere.SetTransform(matrix.Scaling(2, 2, 2).Translate(0, 2, 0))
 		ms := material.New()
+		ms.Reflective = 0.5
 		ms.Color = color.New(0, 1, 0)
 		sphere.SetMaterial(ms)
 		w.AddObject(sphere)

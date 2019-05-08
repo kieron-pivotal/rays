@@ -11,6 +11,7 @@ import (
 	"github.com/kieron-pivotal/rays/light"
 	"github.com/kieron-pivotal/rays/material"
 	"github.com/kieron-pivotal/rays/matrix"
+	"github.com/kieron-pivotal/rays/pattern"
 	"github.com/kieron-pivotal/rays/shape"
 	"github.com/kieron-pivotal/rays/tuple"
 	"github.com/kieron-pivotal/rays/world"
@@ -27,22 +28,33 @@ var _ = Describe("Reflect", func() {
 
 		plane := shape.NewPlane()
 		mp := material.New()
-		mp.Reflective = 0.5
-		mp.Color = color.New(1, 0, 0)
+		mp.Reflective = 0.3
+		mpp := pattern.NewChecker(color.New(1, 1, 1), color.New(0, 0, 0))
+		mpp.SetTransform(matrix.Scaling(1.5, 1.5, 1.5).Translate(0, 0.0001, 0))
+		mp.SetPattern(&mpp)
+		mp.Specular = 0
 		plane.SetMaterial(mp)
 		w.AddObject(plane)
 
-		sphere := shape.NewSphere()
-		sphere.SetTransform(matrix.Scaling(2, 2, 2).Translate(0, 2, 0))
+		sphere1 := shape.NewSphere()
+		sphere1.SetTransform(matrix.Scaling(2, 2, 2).Translate(0, 2, 0))
 		ms := material.New()
 		ms.Reflective = 0.5
 		ms.Color = color.New(0, 1, 0)
-		sphere.SetMaterial(ms)
-		w.AddObject(sphere)
+		sphere1.SetMaterial(ms)
+		w.AddObject(sphere1)
 
-		camera := camera.New(500, 300, math.Pi/3)
+		sphere2 := shape.NewSphere()
+		sphere2.SetTransform(matrix.Translation(-4, 1, -2))
+		ms2 := material.New()
+		ms2.Reflective = 0.3
+		ms2.Color = color.New(0, 0, 1)
+		sphere2.SetMaterial(ms2)
+		w.AddObject(sphere2)
+
+		camera := camera.New(600, 400, math.Pi/3)
 		camera.Transform = matrix.ViewTransformation(
-			tuple.Point(-15, 2, 5),
+			tuple.Point(-12, 2.8, 0),
 			tuple.Point(0, 0, 0),
 			tuple.Vector(0, 1, 0),
 		)

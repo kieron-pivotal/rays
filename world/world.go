@@ -63,7 +63,8 @@ func (w *World) ShadeHit(comps shape.Computations, optRemaining ...int) color.Co
 		remaining = optRemaining[0]
 	}
 	inShadow := w.InShadow(comps.OverPoint)
-	surface := comps.Object.Material().Lighting(*w.LightSource, comps.Object.GetTransform(), comps.Point, comps.EyeV, comps.NormalV, inShadow)
+	surface := comps.Object.Material().Lighting(
+		*w.LightSource, comps.Object.GetTransform(), comps.Point, comps.EyeV, comps.NormalV, inShadow)
 	reflected := w.ReflectedColor(comps, remaining)
 	return surface.Add(reflected)
 }

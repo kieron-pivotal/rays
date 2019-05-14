@@ -79,4 +79,12 @@ var _ = Describe("Unit Sphere", func() {
 			Entry("r3/3, ...", tuple.Point(r3/3, r3/3, r3/3), tuple.Vector(r3/3, r3/3, r3/3)),
 		)
 	})
+
+	It("is possible to easily create a glass sphere", func() {
+		s := shape.NewGlassSphere()
+		m := s.Material()
+		Expect(m.Transparency).To(BeNumerically("~", 1.0))
+		Expect(m.RefractiveIndex).To(BeNumerically("~", 1.5))
+	})
+
 })

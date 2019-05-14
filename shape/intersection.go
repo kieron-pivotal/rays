@@ -1,6 +1,7 @@
 package shape
 
 import (
+	"container/list"
 	"sort"
 
 	"github.com/kieron-pivotal/rays/ray"
@@ -17,14 +18,17 @@ type Intersection struct {
 }
 
 type Computations struct {
-	T         float64
-	Object    *Object
-	Point     tuple.Tuple
-	OverPoint tuple.Tuple
-	EyeV      tuple.Tuple
-	NormalV   tuple.Tuple
-	ReflectV  tuple.Tuple
-	Inside    bool
+	T          float64
+	Object     *Object
+	Point      tuple.Tuple
+	OverPoint  tuple.Tuple
+	UnderPoint tuple.Tuple
+	EyeV       tuple.Tuple
+	NormalV    tuple.Tuple
+	ReflectV   tuple.Tuple
+	N1         float64
+	N2         float64
+	Inside     bool
 }
 
 func NewIntersections() *Intersections {
@@ -55,7 +59,7 @@ func (i *Intersections) Hit() *Intersection {
 	return nil
 }
 
-func (i *Intersection) PrepareComputations(r ray.Ray) Computations {
+func (i *Intersection) PrepareComputations(r ray.Ray, xs *Intersections) Computations {
 	c := Computations{}
 	c.T = i.T
 	c.Object = i.Object
@@ -67,6 +71,44 @@ func (i *Intersection) PrepareComputations(r ray.Ray) Computations {
 		c.NormalV = c.NormalV.Multiply(-1)
 	}
 	c.OverPoint = c.Point.Add(c.NormalV.Multiply(tuple.EPSILON))
+	c.UnderPoint = c.Point.Add(c.NormalV.Multiply(-tuple.EPSILON))
 	c.ReflectV = r.Direction.Reflect(c.NormalV)
+
+	containers := list.New()
+	for j := 0; j < xs.Count(); j++ {
+		x := xs.Get(j)
+		if x == i {
+			if containers.Len() == 0 {
+				c.N1 = 1.0
+			} else {
+				c.N1 = containers.Back().Value.(*Object).Material().RefractiveIndex
+			}
+		}
+
+		if el := find(x.Object, containers); el != nil {
+			containers.Remove(el)
+		} else {
+			containers.PushBack(x.Object)
+		}
+
+		if x == i {
+			if containers.Len() == 0 {
+				c.N2 = 1.0
+			} else {
+				c.N2 = containers.Back().Value.(*Object).Material().RefractiveIndex
+			}
+			break
+		}
+	}
+
 	return c
+}
+
+func find(obj *Object, containers *list.List) *list.Element {
+	for e := containers.Front(); e != nil; e = e.Next() {
+		if e.Value.(*Object) == obj {
+			return e
+		}
+	}
+	return nil
 }

@@ -5,7 +5,10 @@ import (
 
 	"github.com/kieron-pivotal/rays/color"
 	"github.com/kieron-pivotal/rays/light"
+	"github.com/kieron-pivotal/rays/material"
 	"github.com/kieron-pivotal/rays/matrix"
+	"github.com/kieron-pivotal/rays/pattern"
+	"github.com/kieron-pivotal/rays/pattern/fakes"
 	"github.com/kieron-pivotal/rays/ray"
 	"github.com/kieron-pivotal/rays/shape"
 	"github.com/kieron-pivotal/rays/tuple"
@@ -51,11 +54,10 @@ var _ = Describe("World", func() {
 		w := world.Default()
 		r := ray.New(tuple.Point(0, 0, -5), tuple.Vector(0, 0, 1))
 		s := w.Objects[0]
-		i := shape.Intersection{
-			T:      4,
-			Object: s,
-		}
-		comps := i.PrepareComputations(r)
+		ix := shape.NewIntersections()
+		ix.Add(4, s)
+		i := ix.Get(0)
+		comps := i.PrepareComputations(r, ix)
 		c := w.ShadeHit(comps)
 		Expect(c).To(color.Equal(color.New(0.38066, 0.47583, 0.2855)))
 	})
@@ -66,11 +68,10 @@ var _ = Describe("World", func() {
 		w.LightSource = &l
 		r := ray.New(tuple.Point(0, 0, 0), tuple.Vector(0, 0, 1))
 		s := w.Objects[1]
-		i := shape.Intersection{
-			T:      0.5,
-			Object: s,
-		}
-		comps := i.PrepareComputations(r)
+		ix := shape.NewIntersections()
+		ix.Add(0.5, s)
+		i := ix.Get(0)
+		comps := i.PrepareComputations(r, ix)
 		c := w.ShadeHit(comps)
 		Expect(c).To(color.Equal(color.New(0.90498, 0.90498, 0.90498)))
 	})
@@ -115,8 +116,10 @@ var _ = Describe("World", func() {
 			s2.SetTransform(matrix.Translation(0, 0, 10))
 			w.AddObject(s2)
 			r := ray.New(tuple.Point(0, 0, 5), tuple.Vector(0, 0, 1))
-			i := shape.Intersection{T: 4, Object: s2}
-			comps := i.PrepareComputations(r)
+			ix := shape.NewIntersections()
+			ix.Add(4, s2)
+			i := ix.Get(0)
+			comps := i.PrepareComputations(r, ix)
 			c := w.ShadeHit(comps)
 			Expect(c).To(color.Equal(color.New(0.1, 0.1, 0.1)))
 		})
@@ -141,8 +144,10 @@ var _ = Describe("World", func() {
 			m := s.Material()
 			m.Ambient = 1
 			s.SetMaterial(m)
-			i := shape.Intersection{T: 1, Object: s}
-			comps := i.PrepareComputations(r)
+			ix := shape.NewIntersections()
+			ix.Add(1, s)
+			i := ix.Get(0)
+			comps := i.PrepareComputations(r, ix)
 			c := w.ReflectedColor(comps, 1)
 			Expect(c).To(color.Equal(color.New(0, 0, 0)))
 		})
@@ -158,8 +163,10 @@ var _ = Describe("World", func() {
 			s.SetMaterial(m)
 			w.AddObject(s)
 			r := ray.New(tuple.Point(0, 0, -3), tuple.Vector(0, -r2/2, r2/2))
-			i := shape.Intersection{T: r2, Object: s}
-			comps := i.PrepareComputations(r)
+			ix := shape.NewIntersections()
+			ix.Add(r2, s)
+			i := ix.Get(0)
+			comps := i.PrepareComputations(r, ix)
 			c := w.ReflectedColor(comps, 1)
 			Expect(c).To(color.Equal(color.New(0.19033, 0.23791, 0.14274)))
 		})
@@ -175,8 +182,10 @@ var _ = Describe("World", func() {
 			s.SetMaterial(m)
 			w.AddObject(s)
 			r := ray.New(tuple.Point(0, 0, -3), tuple.Vector(0, -r2/2, r2/2))
-			i := shape.Intersection{T: r2, Object: s}
-			comps := i.PrepareComputations(r)
+			ix := shape.NewIntersections()
+			ix.Add(r2, s)
+			i := ix.Get(0)
+			comps := i.PrepareComputations(r, ix)
 			c := w.ShadeHit(comps)
 			Expect(c).To(color.Equal(color.New(0.87675, 0.92434, 0.82917)))
 		})
@@ -215,10 +224,128 @@ var _ = Describe("World", func() {
 			s.SetMaterial(m)
 			w.AddObject(s)
 			r := ray.New(tuple.Point(0, 0, -3), tuple.Vector(0, -r2/2, r2/2))
-			i := shape.Intersection{T: r2, Object: s}
-			comps := i.PrepareComputations(r)
+			ix := shape.NewIntersections()
+			ix.Add(r2, s)
+			i := ix.Get(0)
+			comps := i.PrepareComputations(r, ix)
 			c := w.ReflectedColor(comps, 0)
 			Expect(c).To(color.Equal(color.New(0, 0, 0)))
+		})
+	})
+
+	Context("refraction", func() {
+
+		var (
+			w     *world.World
+			s     *shape.Object
+			r     ray.Ray
+			ix    *shape.Intersections
+			i     *shape.Intersection
+			comps shape.Computations
+		)
+
+		BeforeEach(func() {
+			w = world.Default()
+			s = w.Objects[0]
+			r = ray.New(tuple.Point(0, 0, -5), tuple.Vector(0, 0, 1))
+			ix = shape.NewIntersections()
+			ix.Add(4, s)
+			ix.Add(6, s)
+			i = ix.Get(0)
+		})
+
+		It("returns black for an opaque surface", func() {
+			comps = i.PrepareComputations(r, ix)
+			c := w.RefractedColor(comps, 5)
+			Expect(c).To(color.Equal(color.New(0, 0, 0)))
+		})
+
+		When("recursion has run out", func() {
+			It("returns black", func() {
+				m := material.New()
+				m.Transparency = 1.0
+				m.RefractiveIndex = 1.5
+				s.SetMaterial(m)
+
+				comps = i.PrepareComputations(r, ix)
+				c := w.RefractedColor(comps, 0)
+				Expect(c).To(color.Equal(color.New(0, 0, 0)))
+			})
+		})
+
+		When("there is total internal reflection", func() {
+			It("returns black", func() {
+				r2 := math.Sqrt(2)
+				r = ray.New(tuple.Point(0, 0, r2/2), tuple.Vector(0, 1, 0))
+				ix = shape.NewIntersections()
+				ix.Add(-r2/2, s)
+				ix.Add(r2/2, s)
+				i = ix.Get(1)
+				m := material.New()
+				m.Transparency = 1.0
+				m.RefractiveIndex = 1.5
+				s.SetMaterial(m)
+				comps = i.PrepareComputations(r, ix)
+				c := w.RefractedColor(comps, 5)
+				Expect(c).To(color.Equal(color.New(0, 0, 0)))
+			})
+		})
+
+		When("there is real refraction", func() {
+			It("sends the correct new ray off", func() {
+				ma := material.New()
+				ma.Ambient = 1.0
+				fakePattern := new(fakes.FakeActualPattern)
+				pattern := pattern.New(fakePattern)
+				ma.SetPattern(&pattern)
+				w.Objects[0].SetMaterial(ma)
+
+				mb := material.New()
+				mb.Transparency = 1.0
+				mb.RefractiveIndex = 1.5
+				w.Objects[1].SetMaterial(mb)
+
+				r = ray.New(tuple.Point(0, 0, 0.1), tuple.Vector(0, 1, 0))
+				ix = shape.NewIntersections()
+				ix.Add(-0.9899, w.Objects[0])
+				ix.Add(-0.4899, w.Objects[1])
+				ix.Add(0.4899, w.Objects[1])
+				ix.Add(0.9899, w.Objects[0])
+
+				comps := ix.Get(2).PrepareComputations(r, ix)
+				w.RefractedColor(comps, 5)
+
+				Expect(fakePattern.PatternAtCallCount()).To(Equal(1))
+				p := fakePattern.PatternAtArgsForCall(0)
+				Expect(p).To(tuple.Equal(tuple.Point(0, 0.99888, 0.04721)))
+			})
+		})
+
+		It("is handled in ShadeHit", func() {
+			floor := shape.NewPlane()
+			fm := material.New()
+			fm.Transparency = 0.5
+			fm.RefractiveIndex = 1.5
+			floor.SetMaterial(fm)
+			floor.SetTransform(matrix.Translation(0, -1, 0))
+			w.AddObject(floor)
+
+			ball := shape.NewSphere()
+			bm := material.New()
+			bm.Color = color.New(1, 0, 0)
+			bm.Ambient = 0.5
+			ball.SetMaterial(bm)
+			ball.SetTransform(matrix.Translation(0, -3.5, -0.5))
+			w.AddObject(ball)
+
+			r2 := math.Sqrt(2)
+			r = ray.New(tuple.Point(0, 0, -3), tuple.Vector(0, -r2/2, r2/2))
+			ix = shape.NewIntersections()
+			ix.Add(r2, floor)
+
+			comps := ix.Get(0).PrepareComputations(r, ix)
+			c := w.ShadeHit(comps, 5)
+			Expect(c).To(color.Equal(color.New(0.93642, 0.68642, 0.68642)))
 		})
 	})
 

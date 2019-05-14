@@ -3,6 +3,7 @@ package shape
 import (
 	"math"
 
+	"github.com/kieron-pivotal/rays/material"
 	"github.com/kieron-pivotal/rays/ray"
 	"github.com/kieron-pivotal/rays/tuple"
 )
@@ -11,6 +12,15 @@ type Sphere struct{}
 
 func NewSphere() *Object {
 	return New(Sphere{})
+}
+
+func NewGlassSphere() *Object {
+	s := New(Sphere{})
+	m := material.New()
+	m.Transparency = 1.0
+	m.RefractiveIndex = 1.5
+	s.SetMaterial(m)
+	return s
 }
 
 func (s Sphere) Name() string {

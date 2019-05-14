@@ -124,4 +124,12 @@ var _ = Describe("Material", func() {
 		})
 	})
 
+	Context("with refraction", func() {
+		It("has transparency and refractive index", func() {
+			m := material.New()
+			Expect(m.Transparency).To(BeNumerically("~", 0))
+			Expect(m.RefractiveIndex).To(BeNumerically("~", 1.0))
+		})
+	})
+
 })

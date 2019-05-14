@@ -1,6 +1,8 @@
 package world
 
 import (
+	"math"
+
 	"github.com/kieron-pivotal/rays/color"
 	"github.com/kieron-pivotal/rays/light"
 	"github.com/kieron-pivotal/rays/material"
@@ -66,7 +68,8 @@ func (w *World) ShadeHit(comps shape.Computations, optRemaining ...int) color.Co
 	surface := comps.Object.Material().Lighting(
 		*w.LightSource, comps.Object.GetTransform(), comps.Point, comps.EyeV, comps.NormalV, inShadow)
 	reflected := w.ReflectedColor(comps, remaining)
-	return surface.Add(reflected)
+	refracted := w.RefractedColor(comps, remaining)
+	return surface.Add(reflected).Add(refracted)
 }
 
 func (w *World) ColorAt(r ray.Ray, optRemaining ...int) color.Color {
@@ -77,7 +80,7 @@ func (w *World) ColorAt(r ray.Ray, optRemaining ...int) color.Color {
 	ix := w.Intersections(r)
 	hit := ix.Hit()
 	if hit != nil {
-		comps := hit.PrepareComputations(r)
+		comps := hit.PrepareComputations(r, ix)
 		return w.ShadeHit(comps, remaining)
 	}
 	return color.Color{}
@@ -101,4 +104,23 @@ func (w *World) ReflectedColor(comps shape.Computations, remaining int) color.Co
 	reflectRay := ray.New(comps.OverPoint, comps.ReflectV)
 	color := w.ColorAt(reflectRay, remaining-1)
 	return color.Multiply(m.Reflective)
+}
+
+func (w *World) RefractedColor(comps shape.Computations, remaining int) color.Color {
+	m := comps.Object.Material()
+	if m.Transparency == 0.0 || remaining == 0 {
+		return color.New(0, 0, 0)
+	}
+
+	nRatio := comps.N1 / comps.N2
+	cosI := comps.EyeV.Dot(comps.NormalV)
+	sin2T := nRatio * nRatio * (1 - cosI*cosI)
+	if sin2T > 1 {
+		return color.New(0, 0, 0)
+	}
+
+	cosT := math.Sqrt(1 - sin2T)
+	direction := comps.NormalV.Multiply(nRatio*cosI - cosT).Subtract(comps.EyeV.Multiply(nRatio))
+	refractRay := ray.New(comps.UnderPoint, direction)
+	return w.ColorAt(refractRay, remaining-1).Multiply(comps.Object.Material().Transparency)
 }

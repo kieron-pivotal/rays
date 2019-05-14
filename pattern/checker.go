@@ -13,7 +13,7 @@ type Checker struct {
 }
 
 func (c Checker) PatternAt(p tuple.Tuple) color.Color {
-	md := int64(math.Floor(p.X)) + int64(math.Floor(p.Y)) + int64(math.Floor(p.Z))
+	md := int64(math.Floor(p.X) + math.Floor(p.Y) + math.Floor(p.Z))
 	if md%2 == 0 {
 		return c.A
 	}

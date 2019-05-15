@@ -2,6 +2,7 @@ package shape
 
 import (
 	"container/list"
+	"math"
 	"sort"
 
 	"github.com/kieron-pivotal/rays/ray"
@@ -29,6 +30,21 @@ type Computations struct {
 	N1         float64
 	N2         float64
 	Inside     bool
+}
+
+func (c Computations) Schlick() float64 {
+	cos := c.EyeV.Dot(c.NormalV)
+
+	if c.N1 > c.N2 {
+		n := c.N1 / c.N2
+		sin2T := n * n * (1 - cos*cos)
+		if sin2T > 1 {
+			return 1
+		}
+		cos = math.Sqrt(1 - sin2T)
+	}
+	r0 := math.Pow((c.N1-c.N2)/(c.N1+c.N2), 2)
+	return r0 + (1-r0)*math.Pow(1-cos, 5)
 }
 
 func NewIntersections() *Intersections {

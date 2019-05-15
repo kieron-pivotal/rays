@@ -349,4 +349,43 @@ var _ = Describe("World", func() {
 		})
 	})
 
+	Context("fresnel effect", func() {
+		When("there is both reflection and refraction", func() {
+			It("is handled in ShadeHit", func() {
+				r2 := math.Sqrt(2)
+				w := world.Default()
+				r := ray.New(tuple.Point(0, 0, -3), tuple.Vector(0, -r2/2, r2/2))
+
+				floor := shape.NewPlane()
+				fm := material.New()
+				fm.Reflective = 0.5
+				fm.Transparency = 0.5
+				fm.RefractiveIndex = 1.5
+				floor.SetMaterial(fm)
+				floor.SetTransform(matrix.Translation(0, -1, 0))
+
+				w.AddObject(floor)
+
+				ball := shape.NewSphere()
+				bm := material.New()
+				bm.Color = color.New(1, 0, 0)
+				bm.Ambient = 0.5
+				ball.SetMaterial(bm)
+				ball.SetTransform(matrix.Translation(0, -3.5, -0.5))
+
+				w.AddObject(ball)
+
+				xs := shape.NewIntersections()
+				xs.Add(r2, floor)
+
+				i := xs.Get(0)
+				comps := i.PrepareComputations(r, xs)
+
+				c := w.ShadeHit(comps, 5)
+				Expect(c).To(color.Equal(color.New(0.93391, 0.69643, 0.69243)))
+
+			})
+		})
+
+	})
 })

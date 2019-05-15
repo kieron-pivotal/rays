@@ -174,4 +174,39 @@ var _ = Describe("Intersection", func() {
 		Expect(comps.UnderPoint.Z).To(BeNumerically(">", tuple.EPSILON/2))
 		Expect(comps.Point.Z).To(BeNumerically("<", comps.UnderPoint.Z))
 	})
+
+	Context("Schlick approximation", func() {
+		It("gives 1 under total internal reflection", func() {
+			s := shape.NewGlassSphere()
+			r2 := math.Sqrt(2)
+			r := ray.New(tuple.Point(0, 0, r2/2), tuple.Vector(0, 1, 0))
+			xs := shape.NewIntersections()
+			xs.Add(-r2/2, s)
+			xs.Add(r2/2, s)
+			i := xs.Get(1)
+			comps := i.PrepareComputations(r, xs)
+			Expect(comps.Schlick()).To(BeNumerically("~", 1))
+		})
+
+		It("gives low reflectance for a perpendicular ray", func() {
+			s := shape.NewGlassSphere()
+			r := ray.New(tuple.Point(0, 0, 0), tuple.Vector(0, 1, 0))
+			xs := shape.NewIntersections()
+			xs.Add(-1, s)
+			xs.Add(1, s)
+			i := xs.Get(1)
+			comps := i.PrepareComputations(r, xs)
+			Expect(comps.Schlick()).To(BeNumerically("~", 0.04))
+		})
+
+		It("gives high reflectance for a low angle ray when n2 > n1", func() {
+			s := shape.NewGlassSphere()
+			r := ray.New(tuple.Point(0, 0.99, -2), tuple.Vector(0, 0, 1))
+			xs := shape.NewIntersections()
+			xs.Add(1.8589, s)
+			i := xs.Get(0)
+			comps := i.PrepareComputations(r, xs)
+			Expect(comps.Schlick()).To(BeNumerically("~", 0.48873, tuple.EPSILON))
+		})
+	})
 })

@@ -40,7 +40,10 @@ var _ = Describe("Reflect", func() {
 		sphere1.SetTransform(matrix.Scaling(2, 2, 2).Translate(0, 2, 0))
 		ms := material.New()
 		ms.Reflective = 0.5
-		ms.Color = color.New(0, 1, 0)
+		ms.Transparency = 0.9
+		ms.RefractiveIndex = 1.5
+		ms.Ambient = 0.3
+		ms.Color = color.New(0, 0.2, 0)
 		sphere1.SetMaterial(ms)
 		w.AddObject(sphere1)
 

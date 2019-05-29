@@ -10,6 +10,10 @@ import (
 type Cube struct {
 }
 
+func NewCube() *Object {
+	return New(Cube{})
+}
+
 func (c Cube) Name() string {
 	return "Cube"
 }

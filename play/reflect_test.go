@@ -21,7 +21,7 @@ import (
 
 var _ = Describe("Reflect", func() {
 
-	FIt("does something", func() {
+	It("does something", func() {
 		w := world.New()
 		l := light.NewPoint(tuple.Point(0, 10, 10), color.New(1, 1, 1))
 		w.LightSource = &l

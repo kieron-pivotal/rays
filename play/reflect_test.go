@@ -56,11 +56,11 @@ var _ = Describe("Reflect", func() {
 		w.AddObject(sphere2)
 
 		camera := camera.New(600, 400, math.Pi/3)
-		camera.Transform = matrix.ViewTransformation(
+		camera.SetTransform ( matrix.ViewTransformation(
 			tuple.Point(-12, 2.8, 0),
 			tuple.Point(0, 0, 0),
 			tuple.Vector(0, 1, 0),
-		)
+		))
 
 		canvas := camera.Render(w)
 

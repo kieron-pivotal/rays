@@ -20,7 +20,7 @@ import (
 
 var _ = Describe("Cube", func() {
 
-	FIt("can draw a table", func() {
+	It("can draw a table", func() {
 
 		w := world.New()
 
@@ -73,11 +73,11 @@ var _ = Describe("Cube", func() {
 		w.AddObject(box)
 
 		cam := camera.New(480, 320, math.Pi/4)
-		cam.Transform = matrix.ViewTransformation(
+		cam.SetTransform ( matrix.ViewTransformation(
 			tuple.Point(-100, -100, 70),
 			tuple.Point(0, 0, 15),
 			tuple.Vector(0, 0, 1),
-		)
+		))
 
 		canvas := cam.Render(w)
 

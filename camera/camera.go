@@ -14,7 +14,8 @@ type Camera struct {
 	HSize       int
 	VSize       int
 	FieldOfView float64
-	Transform   matrix.Matrix
+	transform   matrix.Matrix
+	inverseTransform matrix.Matrix
 	HalfWidth   float64
 	HalfHeight  float64
 	PixelSize   float64
@@ -25,10 +26,20 @@ func New(hsize, vsize int, fieldOfView float64) Camera {
 		HSize:       hsize,
 		VSize:       vsize,
 		FieldOfView: fieldOfView,
-		Transform:   matrix.Identity(4, 4),
+		transform:   matrix.Identity(4, 4),
+		inverseTransform: matrix.Identity(4, 4),
 	}
 	c.calcSizes()
 	return c
+}
+
+func (c *Camera) SetTransform(m matrix.Matrix) {
+	c.transform = m
+	c.inverseTransform = m.Inverse()
+}
+
+func (c *Camera) GetTransform() matrix.Matrix {
+	return c.transform
 }
 
 func (c *Camera) calcSizes() {
@@ -50,8 +61,8 @@ func (c Camera) RayForPixel(px, py int) ray.Ray {
 	yoffset := (float64(py) + 0.5) * c.PixelSize
 	worldX := c.HalfWidth - xoffset
 	worldY := c.HalfHeight - yoffset
-	pixel := c.Transform.Inverse().TupleMultiply(tuple.Point(worldX, worldY, -1))
-	origin := c.Transform.Inverse().TupleMultiply(tuple.Point(0, 0, 0))
+	pixel := c.inverseTransform.TupleMultiply(tuple.Point(worldX, worldY, -1))
+	origin := c.inverseTransform.TupleMultiply(tuple.Point(0, 0, 0))
 	direction := pixel.Subtract(origin).Normalize()
 	return ray.New(origin, direction)
 }

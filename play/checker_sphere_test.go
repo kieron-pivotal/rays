@@ -42,11 +42,11 @@ var _ = Describe("CheckerSphere", func() {
 		w.LightSource = &l
 
 		camera := camera.New(300, 200, math.Pi/4)
-		camera.Transform = matrix.ViewTransformation(
+		camera.SetTransform(  matrix.ViewTransformation(
 			tuple.Point(0, 20, 0),
 			tuple.Point(0, 0, 0),
 			tuple.Vector(1, 0, 0),
-		)
+		))
 
 		canvas := camera.Render(w)
 

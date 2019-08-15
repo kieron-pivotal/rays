@@ -89,11 +89,11 @@ var _ = Describe("WorldOne", func() {
 		w.LightSource = &lightSource
 
 		camera := camera.New(300, 180, math.Pi/3)
-		camera.Transform = matrix.ViewTransformation(
+		camera.SetTransform ( matrix.ViewTransformation(
 			tuple.Point(0, 1.5, -5),
 			tuple.Point(0, 1, 0),
 			tuple.Vector(0, 1, 0),
-		)
+		))
 
 		canvas := camera.Render(w)
 
@@ -169,11 +169,11 @@ var _ = Describe("WorldOne", func() {
 		w.LightSource = &lightSource
 
 		camera := camera.New(150, 90, math.Pi/2)
-		camera.Transform = matrix.ViewTransformation(
+		camera.SetTransform ( matrix.ViewTransformation(
 			tuple.Point(-3, 4, 0),
 			tuple.Point(0, 0, 0),
 			tuple.Vector(0, 0, 1),
-		)
+		))
 
 		canvas := camera.Render(w)
 

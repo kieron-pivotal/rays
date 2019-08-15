@@ -5,6 +5,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"runtime/pprof"
 
 	"github.com/kieron-pivotal/rays/camera"
 	"github.com/kieron-pivotal/rays/color"
@@ -16,12 +17,18 @@ import (
 	"github.com/kieron-pivotal/rays/tuple"
 	"github.com/kieron-pivotal/rays/world"
 	. "github.com/onsi/ginkgo"
-	// . "github.com/onsi/gomega"
+	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Reflect", func() {
 
 	It("does something", func() {
+
+		f, err := os.Create("cpu.pprof")
+		Expect(err).NotTo(HaveOccurred())
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+
 		w := world.New()
 		l := light.NewPoint(tuple.Point(0, 10, 10), color.New(1, 1, 1))
 		w.LightSource = &l
@@ -56,7 +63,7 @@ var _ = Describe("Reflect", func() {
 		w.AddObject(sphere2)
 
 		camera := camera.New(600, 400, math.Pi/3)
-		camera.SetTransform ( matrix.ViewTransformation(
+		camera.SetTransform(matrix.ViewTransformation(
 			tuple.Point(-12, 2.8, 0),
 			tuple.Point(0, 0, 0),
 			tuple.Vector(0, 1, 0),

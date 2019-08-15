@@ -26,6 +26,8 @@ type LocalObject interface {
 type Object struct {
 	id          int64
 	transform   matrix.Matrix
+	inverseTransform matrix.Matrix
+	transposeTransform matrix.Matrix
 	material    material.Material
 	localObject LocalObject
 }
@@ -34,6 +36,8 @@ func New(obj LocalObject) *Object {
 	o := Object{
 		id:          GetNextCounter(),
 		transform:   matrix.Identity(4, 4),
+		inverseTransform: matrix.Identity(4, 4),
+		transposeTransform : matrix.Identity(4, 4),
 		material:    material.New(),
 		localObject: obj,
 	}
@@ -41,7 +45,7 @@ func New(obj LocalObject) *Object {
 }
 
 func (o *Object) Intersect(ray ray.Ray) *Intersections {
-	ray2 := ray.Transform(o.transform.Inverse())
+	ray2 := ray.Transform(o.inverseTransform)
 	res := NewIntersections()
 	for _, t := range o.localObject.LocalIntersect(ray2) {
 		res.Add(t, o)
@@ -50,15 +54,17 @@ func (o *Object) Intersect(ray ray.Ray) *Intersections {
 }
 
 func (o *Object) NormalAt(p tuple.Tuple) tuple.Tuple {
-	objPoint := o.transform.Inverse().TupleMultiply(p)
+	objPoint := o.inverseTransform.TupleMultiply(p)
 	objNormal := o.localObject.LocalNormalAt(objPoint)
-	worldNormal := o.transform.Inverse().Transpose().TupleMultiply(objNormal)
+	worldNormal := o.transposeTransform.TupleMultiply(objNormal)
 	worldNormal.W = 0
 	return worldNormal.Normalize()
 }
 
 func (o *Object) SetTransform(t matrix.Matrix) {
 	o.transform = t
+	o.inverseTransform = t.Inverse()
+	o.transposeTransform = o.inverseTransform.Transpose()
 }
 
 func (o *Object) GetTransform() matrix.Matrix {

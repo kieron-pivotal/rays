@@ -9,6 +9,7 @@ import (
 type Pattern struct {
 	actualPattern ActualPattern
 	transform     matrix.Matrix
+	inverseTransform matrix.Matrix
 }
 
 //go:generate counterfeiter -o fakes/fake_actual_pattern.go . ActualPattern
@@ -21,6 +22,7 @@ func New(actualPattern ActualPattern) Pattern {
 	return Pattern{
 		actualPattern: actualPattern,
 		transform:     matrix.Identity(4, 4),
+		inverseTransform : matrix.Identity(4, 4),
 	}
 }
 
@@ -30,10 +32,11 @@ func (p Pattern) GetTransform() matrix.Matrix {
 
 func (p *Pattern) SetTransform(t matrix.Matrix) {
 	p.transform = t
+	p.inverseTransform = t.Inverse()
 }
 
 func (p Pattern) PatternAtShape(objTransform matrix.Matrix, wp tuple.Tuple) color.Color {
 	op := objTransform.Inverse().TupleMultiply(wp)
-	pp := p.transform.Inverse().TupleMultiply(op)
+	pp := p.inverseTransform.TupleMultiply(op)
 	return p.actualPattern.PatternAt(pp)
 }

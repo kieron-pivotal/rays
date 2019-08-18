@@ -48,7 +48,9 @@ func (c Computations) Schlick() float64 {
 }
 
 func NewIntersections() *Intersections {
-	return &Intersections{}
+	return &Intersections{
+		list: make([]*Intersection, 0, 2),
+	}
 }
 
 func (i Intersections) Count() int {

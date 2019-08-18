@@ -85,14 +85,12 @@ func (m Matrix) Multiply(n Matrix) Matrix {
 }
 
 func (m Matrix) TupleMultiply(t tuple.Tuple) tuple.Tuple {
-	tm := New(4, 1, t.X, t.Y, t.Z, t.W)
-	p := m.Multiply(tm)
-	return tuple.Tuple{
-		X: p.values[0],
-		Y: p.values[1],
-		Z: p.values[2],
-		W: p.values[3],
-	}
+	c := m.cols
+	x := m.values[0]*t.X + m.values[1]*t.Y + m.values[2]*t.Z + m.values[3]*t.W
+	y := m.values[c]*t.X + m.values[c+1]*t.Y + m.values[c+2]*t.Z + m.values[c+3]*t.W
+	z := m.values[2*c+0]*t.X + m.values[2*c+1]*t.Y + m.values[2*c+2]*t.Z + m.values[2*c+3]*t.W
+	w := m.values[3*c+0]*t.X + m.values[3*c+1]*t.Y + m.values[3*c+2]*t.Z + m.values[3*c+3]*t.W
+	return tuple.Tuple{X: x, Y: y, Z: z, W: w}
 }
 
 func Identity(r, c int) Matrix {

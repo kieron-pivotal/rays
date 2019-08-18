@@ -11,22 +11,22 @@ import (
 )
 
 type Camera struct {
-	HSize       int
-	VSize       int
-	FieldOfView float64
-	transform   matrix.Matrix
+	HSize            int
+	VSize            int
+	FieldOfView      float64
+	transform        matrix.Matrix
 	inverseTransform matrix.Matrix
-	HalfWidth   float64
-	HalfHeight  float64
-	PixelSize   float64
+	HalfWidth        float64
+	HalfHeight       float64
+	PixelSize        float64
 }
 
 func New(hsize, vsize int, fieldOfView float64) Camera {
 	c := Camera{
-		HSize:       hsize,
-		VSize:       vsize,
-		FieldOfView: fieldOfView,
-		transform:   matrix.Identity(4, 4),
+		HSize:            hsize,
+		VSize:            vsize,
+		FieldOfView:      fieldOfView,
+		transform:        matrix.Identity(4, 4),
 		inverseTransform: matrix.Identity(4, 4),
 	}
 	c.calcSizes()

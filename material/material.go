@@ -35,14 +35,25 @@ func New() Material {
 	}
 }
 
-func (m Material) Lighting(l light.Point, objTransform matrix.Matrix, pos, eye, normal tuple.Tuple, inShadow bool) color.Color {
+//go:generate counterfeiter . InvTransformGetter
+
+type InvTransformGetter interface {
+	GetInverseTransform() matrix.Matrix
+}
+
+func (m Material) Lighting(
+	l light.Point,
+	invTransformGetter InvTransformGetter,
+	pos, eye, normal tuple.Tuple,
+	inShadow bool,
+) color.Color {
 
 	black := color.New(0, 0, 0)
 	var ambient, diffuse, specular color.Color
 
 	c := m.Color
 	if m.pattern != nil {
-		c = m.pattern.PatternAtShape(objTransform, pos)
+		c = m.pattern.PatternAtShape(invTransformGetter, pos)
 	}
 	effectiveColor := c.ColorMultiply(l.Intensity)
 	ambient = effectiveColor.Multiply(m.Ambient)

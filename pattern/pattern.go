@@ -18,6 +18,12 @@ type ActualPattern interface {
 	PatternAt(p tuple.Tuple) color.Color
 }
 
+//go:generate counterfeiter -o fakes/fake_inv_transform_getter.go . InvTransformGetter
+
+type InvTransformGetter interface {
+	GetInverseTransform() matrix.Matrix
+}
+
 func New(actualPattern ActualPattern) Pattern {
 	return Pattern{
 		actualPattern: actualPattern,
@@ -35,8 +41,8 @@ func (p *Pattern) SetTransform(t matrix.Matrix) {
 	p.inverseTransform = t.Inverse()
 }
 
-func (p Pattern) PatternAtShape(objTransform matrix.Matrix, wp tuple.Tuple) color.Color {
-	op := objTransform.Inverse().TupleMultiply(wp)
+func (p Pattern) PatternAtShape(obj InvTransformGetter, wp tuple.Tuple) color.Color {
+	op := obj.GetInverseTransform().TupleMultiply(wp)
 	pp := p.inverseTransform.TupleMultiply(op)
 	return p.actualPattern.PatternAt(pp)
 }

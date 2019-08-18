@@ -24,22 +24,22 @@ type LocalObject interface {
 }
 
 type Object struct {
-	id          int64
-	transform   matrix.Matrix
-	inverseTransform matrix.Matrix
+	id                 int64
+	transform          matrix.Matrix
+	inverseTransform   matrix.Matrix
 	transposeTransform matrix.Matrix
-	material    material.Material
-	localObject LocalObject
+	material           material.Material
+	localObject        LocalObject
 }
 
 func New(obj LocalObject) *Object {
 	o := Object{
-		id:          GetNextCounter(),
-		transform:   matrix.Identity(4, 4),
-		inverseTransform: matrix.Identity(4, 4),
-		transposeTransform : matrix.Identity(4, 4),
-		material:    material.New(),
-		localObject: obj,
+		id:                 GetNextCounter(),
+		transform:          matrix.Identity(4, 4),
+		inverseTransform:   matrix.Identity(4, 4),
+		transposeTransform: matrix.Identity(4, 4),
+		material:           material.New(),
+		localObject:        obj,
 	}
 	return &o
 }
@@ -69,6 +69,10 @@ func (o *Object) SetTransform(t matrix.Matrix) {
 
 func (o *Object) GetTransform() matrix.Matrix {
 	return o.transform
+}
+
+func (o *Object) GetInverseTransform() matrix.Matrix {
+	return o.inverseTransform
 }
 
 func (o *Object) Material() material.Material {

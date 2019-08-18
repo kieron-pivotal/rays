@@ -26,7 +26,9 @@ var _ = Describe("Reflect", func() {
 
 		f, err := os.Create("cpu.pprof")
 		Expect(err).NotTo(HaveOccurred())
-		pprof.StartCPUProfile(f)
+		err = pprof.StartCPUProfile(f)
+		Expect(err).NotTo(HaveOccurred())
+
 		defer pprof.StopCPUProfile()
 
 		w := world.New()
@@ -36,7 +38,7 @@ var _ = Describe("Reflect", func() {
 		plane := shape.NewPlane()
 		mp := material.New()
 		mp.Reflective = 0.3
-		mpp := pattern.NewChecker(color.New(1, 1, 1), color.New(0, 0, 0))
+		mpp := pattern.NewChecker(color.New(0.6, 0.5, 0.5), color.New(0, 0, 0))
 		mpp.SetTransform(matrix.Scaling(1.5, 1.5, 1.5).Translate(0, 0.0001, 0))
 		mp.SetPattern(&mpp)
 		mp.Specular = 0

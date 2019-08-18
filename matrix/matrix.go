@@ -76,7 +76,7 @@ func (m Matrix) Multiply(n Matrix) Matrix {
 		for c := 0; c < n.cols; c++ {
 			var v float64
 			for i := 0; i < m.cols; i++ {
-				v += out.Get(r, c) + m.Get(r, i)*n.Get(i, c)
+				v += out.values[r*out.cols+c] + m.values[r*m.cols+i]*n.values[i*n.cols+c]
 			}
 			out.Set(r, c, v)
 		}

@@ -8,7 +8,7 @@ import (
 	"github.com/kieron-pivotal/rays/material"
 	"github.com/kieron-pivotal/rays/matrix"
 	"github.com/kieron-pivotal/rays/pattern"
-	"github.com/kieron-pivotal/rays/pattern/fakes"
+	"github.com/kieron-pivotal/rays/pattern/patternfakes"
 	"github.com/kieron-pivotal/rays/ray"
 	"github.com/kieron-pivotal/rays/shape"
 	"github.com/kieron-pivotal/rays/tuple"
@@ -295,7 +295,7 @@ var _ = Describe("World", func() {
 			It("sends the correct new ray off", func() {
 				ma := material.New()
 				ma.Ambient = 1.0
-				fakePattern := new(fakes.FakeActualPattern)
+				fakePattern := new(patternfakes.FakeActualPattern)
 				pattern := pattern.New(fakePattern)
 				ma.SetPattern(&pattern)
 				w.Objects[0].SetMaterial(ma)

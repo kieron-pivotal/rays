@@ -4,7 +4,7 @@ import (
 	"github.com/kieron-pivotal/rays/color"
 	"github.com/kieron-pivotal/rays/matrix"
 	"github.com/kieron-pivotal/rays/pattern"
-	"github.com/kieron-pivotal/rays/pattern/fakes"
+	"github.com/kieron-pivotal/rays/pattern/patternfakes"
 	"github.com/kieron-pivotal/rays/tuple"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -19,14 +19,14 @@ var _ = Describe("Pattern", func() {
 
 	Context("patterns", func() {
 		var (
-			fakePattern   *fakes.FakeActualPattern
-			fakeInvGetter *fakes.FakeInvTransformGetter
+			fakePattern   *patternfakes.FakeActualPattern
+			fakeInvGetter *patternfakes.FakeInvTransformGetter
 			p             pattern.Pattern
 		)
 
 		BeforeEach(func() {
-			fakePattern = new(fakes.FakeActualPattern)
-			fakeInvGetter = new(fakes.FakeInvTransformGetter)
+			fakePattern = new(patternfakes.FakeActualPattern)
+			fakeInvGetter = new(patternfakes.FakeInvTransformGetter)
 			p = pattern.New(fakePattern)
 		})
 

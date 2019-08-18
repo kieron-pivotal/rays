@@ -7,7 +7,7 @@ import (
 	"github.com/kieron-pivotal/rays/matrix"
 	"github.com/kieron-pivotal/rays/ray"
 	"github.com/kieron-pivotal/rays/shape"
-	"github.com/kieron-pivotal/rays/shape/fakes"
+	"github.com/kieron-pivotal/rays/shape/shapefakes"
 	"github.com/kieron-pivotal/rays/tuple"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
@@ -17,11 +17,11 @@ import (
 var _ = Describe("Shape", func() {
 	var (
 		s           *shape.Object
-		localObject *fakes.FakeLocalObject
+		localObject *shapefakes.FakeLocalObject
 	)
 
 	BeforeEach(func() {
-		localObject = new(fakes.FakeLocalObject)
+		localObject = new(shapefakes.FakeLocalObject)
 		s = shape.New(localObject)
 	})
 

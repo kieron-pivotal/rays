@@ -15,7 +15,7 @@ func GetNextCounter() int64 {
 	return atomic.AddInt64(&counter, 1)
 }
 
-//go:generate counterfeiter -o fakes/fake_local_object.go . LocalObject
+//go:generate counterfeiter . LocalObject
 
 type LocalObject interface {
 	Name() string

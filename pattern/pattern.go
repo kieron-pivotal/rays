@@ -7,18 +7,18 @@ import (
 )
 
 type Pattern struct {
-	actualPattern ActualPattern
-	transform     matrix.Matrix
+	actualPattern    ActualPattern
+	transform        matrix.Matrix
 	inverseTransform matrix.Matrix
 }
 
-//go:generate counterfeiter -o fakes/fake_actual_pattern.go . ActualPattern
+//go:generate counterfeiter . ActualPattern
 
 type ActualPattern interface {
 	PatternAt(p tuple.Tuple) color.Color
 }
 
-//go:generate counterfeiter -o fakes/fake_inv_transform_getter.go . InvTransformGetter
+//go:generate counterfeiter . InvTransformGetter
 
 type InvTransformGetter interface {
 	GetInverseTransform() matrix.Matrix
@@ -26,9 +26,9 @@ type InvTransformGetter interface {
 
 func New(actualPattern ActualPattern) Pattern {
 	return Pattern{
-		actualPattern: actualPattern,
-		transform:     matrix.Identity(4, 4),
-		inverseTransform : matrix.Identity(4, 4),
+		actualPattern:    actualPattern,
+		transform:        matrix.Identity(4, 4),
+		inverseTransform: matrix.Identity(4, 4),
 	}
 }
 

@@ -8,7 +8,7 @@ import (
 	"github.com/kieron-pivotal/rays/material"
 	"github.com/kieron-pivotal/rays/matrix"
 	"github.com/kieron-pivotal/rays/pattern"
-	"github.com/kieron-pivotal/rays/pattern/fakes"
+	"github.com/kieron-pivotal/rays/pattern/patternfakes"
 	"github.com/kieron-pivotal/rays/tuple"
 
 	. "github.com/onsi/ginkgo"
@@ -42,7 +42,7 @@ var _ = Describe("Material", func() {
 		DescribeTable("lighting",
 			func(eye, normal tuple.Tuple, l light.Point, inShadow bool, expected color.Color) {
 				id := matrix.Identity(4, 4)
-				invGetter := new(fakes.FakeInvTransformGetter)
+				invGetter := new(patternfakes.FakeInvTransformGetter)
 				invGetter.GetInverseTransformReturns(id)
 				Expect(m.Lighting(l, invGetter, p, eye, normal, inShadow)).To(color.Equal(expected))
 			},
@@ -112,7 +112,7 @@ var _ = Describe("Material", func() {
 			normalv := tuple.Vector(0, 0, -1)
 			l := light.NewPoint(tuple.Point(0, 0, -10), color.New(1, 1, 1))
 			id := matrix.Identity(4, 4)
-			invGetter := new(fakes.FakeInvTransformGetter)
+			invGetter := new(patternfakes.FakeInvTransformGetter)
 			invGetter.GetInverseTransformReturns(id)
 
 			c1 := m.Lighting(l, invGetter, tuple.Point(0.9, 0, 0), eyev, normalv, false)
